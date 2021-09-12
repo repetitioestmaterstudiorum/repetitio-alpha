@@ -5,7 +5,6 @@ node_modules/
 logs/
 
 # project files
-notes.txt
 .env-sample
 
 # envivornment files
