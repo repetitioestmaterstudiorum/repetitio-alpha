@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { DecksCollection } from '../api/collections/decksCollection.js'
+import { DeckCollection } from '../../api/collections/deckCollection.js'
 
 // ------------
 
@@ -12,7 +12,7 @@ export const DeckForm = () => {
 
 		if (!title) return
 
-		DecksCollection.insert({
+		DeckCollection.insert({
 			title: title.trim(),
 			createdAt: new Date(),
 		})
@@ -29,7 +29,7 @@ export const DeckForm = () => {
 				onChange={e => setTitle(e.target.value)}
 			/>
 
-			<button type='submit'>Add Deck</button>
+			<button type='submit'>&#10133; Add Deck</button>
 		</form>
 	)
 }

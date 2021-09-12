@@ -1,13 +1,14 @@
 import React from 'react'
 import { useTracker } from 'meteor/react-meteor-data'
 
-import { CardsCollection } from '../api/collections/cardsCollection.js'
+import { CardCollection } from '../../api/collections/cardCollection.js'
+import { C } from '/imports/startup/client/clientConstants.js'
 
 // ------------
 
 export const Deck = ({ deck, onDeleteClick }) => {
 	const cardsCount = useTracker(() =>
-		CardsCollection.find(Object.assign({}, cardsBasicFilter, { deckId: deck._id })).count()
+		CardCollection.find(Object.assign({}, cardsBasicFilter, { deckId: deck._id })).count()
 	)
 
 	return (
@@ -18,13 +19,13 @@ export const Deck = ({ deck, onDeleteClick }) => {
 			</div>
 			<div>
 				{/* practice / play icon*/}
-				<button style={actionButtonStyle} onClick={() => onOpenClick}>
+				<button style={C.styles.actionButton} onClick={() => onOpenClick}>
 					&#9654;
 				</button>
 				{/* edit icon*/}
-				<button style={actionButtonStyle}>&#9997;</button>
+				<button style={C.styles.actionButton}>&#9997;</button>
 				{/* delete icon*/}
-				<button style={actionButtonStyle} onClick={() => onDeleteClick(deck)}>
+				<button style={C.styles.actionButton} onClick={() => onDeleteClick(deck)}>
 					&#10007;
 				</button>
 			</div>
@@ -33,11 +34,3 @@ export const Deck = ({ deck, onDeleteClick }) => {
 }
 
 const cardsBasicFilter = { deckDeleted: { $ne: true }, deleted: { $ne: true } }
-
-const actionButtonStyle = {
-	margin: '0 0 0 0.4rem',
-	padding: '0.3rem 0.6rem',
-	height: '2.4rem',
-	width: '2.6rem',
-	borderRadius: '2rem',
-}

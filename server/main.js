@@ -1,20 +1,20 @@
 import { Meteor } from 'meteor/meteor'
 import { Accounts } from 'meteor/accounts-base'
 
-import { DecksCollection } from '/imports/api/collections/decksCollection.js'
+import { DeckCollection } from '../imports/api/collections/deckCollection.js'
 import { C } from '/imports/startup/server/serverConstants.js'
 import { sampleData } from '/imports/api/sampleData/sampleData.js'
-import { CardsCollection } from '/imports/api/collections/cardsCollection'
+import { CardCollection } from '../imports/api/collections/cardCollection'
 
 // ------------
 
 function insertSampleData(sD) {
 	sD.decks.forEach(d => {
-		DecksCollection.insert(Object.assign({}, d, { createdAt: new Date() }))
+		DeckCollection.insert(Object.assign({}, d, { createdAt: new Date() }))
 	})
 
 	sD.cards.forEach(c => {
-		CardsCollection.insert(Object.assign({}, c, { createdAt: new Date() }))
+		CardCollection.insert(Object.assign({}, c, { createdAt: new Date() }))
 	})
 }
 
@@ -26,7 +26,7 @@ Meteor.startup(() => {
 		})
 	}
 
-	if (DecksCollection.find().count() === 0) {
+	if (DeckCollection.find().count() === 0) {
 		insertSampleData(sampleData)
 	}
 })
