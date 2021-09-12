@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { DecksCollection } from '../api/decksCollection.js'
+import { DecksCollection } from '../api/collections/decksCollection.js'
 
 // ------------
 

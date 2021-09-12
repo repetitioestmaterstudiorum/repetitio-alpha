@@ -1,8 +1,8 @@
 import React from 'react'
 import { useTracker } from 'meteor/react-meteor-data'
 
-import { DecksCollection } from '../api/decksCollection.js'
-import { CardsCollection } from '../api/decksCollection.js'
+import { DecksCollection } from '../api/collections/decksCollection.js'
+import { CardsCollection } from '../api/collections/decksCollection.js'
 import { Deck } from './Deck.jsx'
 import { DeckForm } from './DeckForm.jsx'
 
@@ -13,10 +13,11 @@ export const App = () => {
 		DecksCollection.find(decksBasicFilter, { sort: { createdAt: -1 } }).fetch()
 	)
 
-	const decksCount = useTracker(() => DecksCollection.find(decksBasicFilter)).count()
+	const decksCount = useTracker(() => DecksCollection.find(decksBasicFilter).count())
 
 	return (
 		<div>
+			{/* coffee icon */}
 			<h1>&#9749; repetitio</h1>
 			<h2>Existing Decks ({decksCount}):</h2>
 

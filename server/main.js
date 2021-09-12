@@ -1,24 +1,32 @@
 import { Meteor } from 'meteor/meteor'
 import { Accounts } from 'meteor/accounts-base'
 
-import { DecksCollection } from '/imports/api/decksCollection.js'
+import { DecksCollection } from '/imports/api/collections/decksCollection.js'
 import { C } from '/imports/startup/server/serverConstants.js'
+import { sampleData } from '/imports/api/sampleData/sampleData.js'
+import { CardsCollection } from '/imports/api/collections/cardsCollection'
 
 // ------------
 
-function insertDeck(title) {
-	DecksCollection.insert({ title, createdAt: new Date() })
+function insertSampleData(sD) {
+	sD.decks.forEach(d => {
+		DecksCollection.insert(Object.assign({}, d, { createdAt: new Date() }))
+	})
+
+	sD.cards.forEach(c => {
+		CardsCollection.insert(Object.assign({}, c, { createdAt: new Date() }))
+	})
 }
 
 Meteor.startup(() => {
-	if (DecksCollection.find().count() === 0) {
-		;['First Deck', 'Second Deck', 'Third Deck'].forEach(insertDeck)
+	if (!Accounts.findUserByUsername(C.meteor.accounts.admin)) {
+		Accounts.createUser({
+			username: C.meteor.accounts.admin,
+			password: C.meteor.accounts.pass,
+		})
 	}
 
-	if (!Accounts.findUserByUsername(C.meteor.accounts.defaultAdmin)) {
-		Accounts.createUser({
-			username: C.meteor.accounts.defaultAdmin,
-			password: C.meteor.accounts.defaultPass,
-		})
+	if (DecksCollection.find().count() === 0) {
+		insertSampleData(sampleData)
 	}
 })
