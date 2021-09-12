@@ -1,0 +1,36 @@
+{
+	"name": "simple-todos-react",
+	"private": true,
+	"scripts": {
+		"start": "git pull && npm i && pm2 start meteor run >> logs/start.log 2>&1",
+		"dev": "export $(grep -v '^#' .env | xargs) && TEST_RUN='true' nodemon meteor run",
+		"dev-trace": "export $(grep -v '^#' .env | xargs) && TEST_RUN='true' node --trace-warnings meteor run",
+		"test": "export $(grep -v '^#' .env | xargs) && NODE_OPTIONS='--experimental-vm-modules' TEST_RUN='true' jest",
+		"test-meteor": "meteor test --once --driver-package meteortesting:mocha",
+		"test-meteor-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
+		"visualize": "meteor --production --extra-packages bundle-visualizer",
+		"restart": "npm run stop && npm start >> logs/restart.log  2>&1",
+		"list": "pm2 list",
+		"monit": "pm2 monit",
+		"logs": "pm2 logs",
+		"stop": "pm2 stop all >> logs/stop.log 2>&1"
+	},
+	"dependencies": {
+		"@babel/runtime": "^7.14.8",
+		"bcrypt": "^5.0.1",
+		"lodash.clonedeep": "^4.5.0",
+		"meteor-node-stubs": "^1.1.0",
+		"nodemon": "^2.0.12",
+		"pm2": "^5.1.1",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"supermemo": "^2.0.17"
+	},
+	"meteor": {
+		"mainModule": {
+			"client": "client/main.jsx",
+			"server": "server/main.js"
+		},
+		"testModule": "tests/main.js"
+	}
+}

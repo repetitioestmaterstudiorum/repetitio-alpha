@@ -1,0 +1,18 @@
+/* water.css overwrites */
+
+/* :root {
+	--form-placeholder: rgb(36, 36, 36);
+} */
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--background-body: rgb(46, 46, 46);
+	}
+}
+
+/* global style */
+* {
+	font-family: Helvetica, sans-serif;
+	font-size: 16px;
+	vertical-align: middle;
+}

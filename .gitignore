@@ -1,0 +1,15 @@
+# npm
+node_modules/
+
+# logs
+logs/
+
+# project files
+notes.txt
+.env-sample
+
+# envivornment files
+.env
+
+# system files
+**/.DS_Store
