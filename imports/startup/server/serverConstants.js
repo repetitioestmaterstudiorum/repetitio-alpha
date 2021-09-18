@@ -1,11 +1,8 @@
-import cloneDeep from 'lodash.clonedeep'
-
-import { C as global_C } from '/imports/startup/globalConstants.js'
-import { sampleData } from '../../api/sampleData.js'
+import { sampleData } from '/imports/api/server/sampleData.js'
 
 // ------------
 
-export const C = cloneDeep(global_C)
+export const C = {}
 
 C.meteor = {
 	accounts: {

@@ -3,12 +3,12 @@ import { Accounts } from 'meteor/accounts-base'
 
 import { DeckCollection } from '/imports/api/collections/deckCollection.js'
 import { C } from '/imports/startup/server/serverConstants.js'
-import { sampleData, insertSampleDecks } from '../imports/api/sampleData.js'
+import { sampleData, insertSampleDecks } from '/imports/api/server/sampleData.js'
 
-// methods
+// method files
 import '/imports/api/methods/devMethods.js'
-import '/imports/api/methods/deckMethods'
-import '/imports/api/methods/cardMethods'
+import '/imports/api/methods/deckMethods.js'
+import '/imports/api/methods/cardMethods.js'
 
 // ------------
 
