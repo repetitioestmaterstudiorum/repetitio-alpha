@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { DeckCollection } from '../../api/collections/deckCollection.js'
+import { DeckCollection } from '/imports/api/collections/deckCollection.js'
 
 // ------------
 
@@ -12,10 +12,7 @@ export const DeckForm = () => {
 
 		if (!title) return
 
-		DeckCollection.insert({
-			title: title.trim(),
-			createdAt: new Date(),
-		})
+		DeckCollection.insert({ title: title.trim() })
 
 		setTitle('')
 	}

@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor'
 import React, { useState } from 'react'
 
+import { Header } from '/imports/ui/components/Header.jsx'
+
 // ------------
 
 export const Login = () => {
@@ -14,26 +16,31 @@ export const Login = () => {
 	}
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<label htmlFor='username'>Username</label>
-			<input
-				type='text'
-				placeholder='Username'
-				name='username'
-				required
-				onChange={e => setUsername(e.target.value)}
-			/>
+		<>
+			<Header />
+			<form onSubmit={handleSubmit}>
+				<label htmlFor='username'>Username</label>
+				<input
+					type='text'
+					placeholder='Username'
+					name='username'
+					required
+					onChange={e => setUsername(e.target.value)}
+				/>
 
-			<label htmlFor='password'>Password</label>
-			<input
-				type='password'
-				placeholder='Password'
-				name='password'
-				required
-				onChange={e => setPassword(e.target.value)}
-			/>
+				<label htmlFor='password'>Password</label>
+				<input
+					type='password'
+					placeholder='Password'
+					name='password'
+					required
+					onChange={e => setPassword(e.target.value)}
+				/>
 
-			<button type='submit'>&#128275; Unlock</button>
-		</form>
+				<div style={{ textAlign: 'center', margin: '1rem 0 1rem' }}>
+					<button type='submit'>&#128275; Unlock</button>
+				</div>
+			</form>
+		</>
 	)
 }

@@ -1,46 +1,43 @@
+import { Meteor } from 'meteor/meteor'
 import React from 'react'
 import { useTracker } from 'meteor/react-meteor-data'
 
 import { DeckCollection } from '/imports/api/collections/deckCollection.js'
-import { CardCollection } from '/imports/api/collections/cardCollection.js'
-import { Deck } from '/imports/ui/components/Deck.jsx'
+import { DeckRow } from '../components/DeckRow.jsx'
 import { DeckForm } from '/imports/ui/components/AddDeckForm.jsx'
+import { Header } from '/imports/ui/components/Header.jsx'
+import { Footer } from '/imports/ui/components/Footer.jsx'
 
 // ------------
 
 export const DeckOverview = () => {
-	const decks = useTracker(() =>
-		DeckCollection.find(decksBasicFilter, { sort: { createdAt: -1 } }).fetch()
-	)
-
-	const decksCount = useTracker(() => DeckCollection.find(decksBasicFilter).count())
+	const { decks, decksCount } = useTracker(() => ({
+		decks: DeckCollection.find({ deleted: { $ne: true } }, { sort: { createdAt: -1 } }).fetch(),
+		decksCount: DeckCollection.find({ deleted: { $ne: true } }).count(),
+	}))
 
 	return (
 		<div>
-			{/* coffee icon */}
-			<h1>&#9749; repetitio</h1>
-			<h2>Existing Decks ({decksCount}):</h2>
+			<Header />
+			<div>
+				<h2>Your Decks ({decksCount})</h2>
 
-			{decks.map(deck => (
-				<Deck key={deck._id} deck={deck} onDeleteClick={deleteDeck} />
-			))}
+				{decks.map(deck => (
+					<DeckRow
+						key={deck._id}
+						deck={deck}
+						onDeleteClick={() => Meteor.call('deleteDeck', deck._id)}
+					/>
+				))}
+			</div>
 
-			<details>
-				<summary>Add a new Deck</summary>
-				<DeckForm />
-			</details>
+			<div style={{ margin: '2rem 0 1.5rem' }}>
+				<details>
+					<summary>Add a new Deck</summary>
+					<DeckForm />
+				</details>
+			</div>
+			<Footer />
 		</div>
 	)
-}
-
-const decksBasicFilter = { deleted: { $ne: true } }
-
-function deleteDeck(deck) {
-	DeckCollection.update({ _id: deck._id }, { $set: { deleted: true } })
-
-	deleteDecksCards(deck._id)
-}
-
-function deleteDecksCards(deckId) {
-	CardCollection.update({ deckId }, { $set: { deckDeleted: true } })
 }
