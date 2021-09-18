@@ -5,8 +5,11 @@ import { DeckCollection } from '/imports/api/collections/deckCollection.js'
 import { C } from '/imports/startup/server/serverConstants.js'
 import { sampleData, insertSampleDecks } from '/imports/api/server/sampleData.js'
 
+// publications
+import '/imports/api/server/meteorPublications.js'
+
 // method files
-import '/imports/api/methods/devMethods.js'
+import '/imports/api/server/devMethods.js'
 import '/imports/api/methods/deckMethods.js'
 import '/imports/api/methods/cardMethods.js'
 
@@ -20,7 +23,6 @@ Meteor.startup(() => {
 			password: C.meteor.accounts.pass,
 		})
 	}
-
 	if (DeckCollection.find().count() === 0) {
 		insertSampleDecks(sampleData.decks)
 	}

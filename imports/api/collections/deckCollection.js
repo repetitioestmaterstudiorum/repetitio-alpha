@@ -5,12 +5,6 @@ import { Mongo } from 'meteor/mongo'
 
 export const DeckCollection = new Mongo.Collection('decks')
 
-if (Meteor.isServer) {
-	Meteor.publish('decks', function () {
-		return DeckCollection.find({ userId: this.userId })
-	})
-}
-
 DeckCollection.before.insert(function (userId, doc) {
 	doc.createdAt = new Date()
 })

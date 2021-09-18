@@ -5,12 +5,6 @@ import { Mongo } from 'meteor/mongo'
 
 export const CardCollection = new Mongo.Collection('cards')
 
-if (Meteor.isServer) {
-	Meteor.publish('cards', function () {
-		return CardCollection.find({ userId: this.userId })
-	})
-}
-
 CardCollection.before.insert(function (userId, doc) {
 	doc.createdAt = new Date()
 	doc.interval = doc.interval || 0
