@@ -1,5 +1,4 @@
-import React from 'react'
-import { useTracker } from 'meteor/react-meteor-data'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 
 import { CardCollection } from '/imports/api/collections/cardCollection.js'
@@ -7,22 +6,24 @@ import { CardCollection } from '/imports/api/collections/cardCollection.js'
 // ------------
 
 export const DeckRow = ({ deck, onDeleteClick }) => {
-	const cardsCount = useTracker(() =>
-		CardCollection.find({ deleted: { $ne: true }, deckId: deck._id }).count()
-	)
+	const cardCount = CardCollection.find({
+		deckId: deck._id,
+		dueDate: { $lte: new Date() },
+	}).count()
+	const hasCardsToLearn = !!cardCount
 
 	return (
-		<div style={{ display: 'flex', marginBottom: '1rem' }}>
-			{/* <div style={{ width: '45vw' }}> */}
+		<div style={{ display: 'flex', margin: '1.5rem 0' }}>
 			<div style={{ display: 'flex', flex: 1, alignItems: 'center', marginRight: '1rem' }}>
-				{deck.title} ({cardsCount})
+				<span style={hasCardsToLearn ? deckHighlighted : deckNotHighlighted}>
+					{deck.title} ({cardCount})
+				</span>
 			</div>
 			<div>
 				{/* practice / play icon*/}
 				<Link to={`/deck/${deck._id}`}>
 					<button style={actionButton}>&#9654;</button>{' '}
 				</Link>
-
 				{/* edit icon*/}
 				<Link to={`/edit-deck/${deck._id}`}>
 					<button style={actionButton}>&#9997;</button>
@@ -42,4 +43,12 @@ const actionButton = {
 	height: '2.4rem',
 	width: '2.6rem',
 	borderRadius: '2rem',
+}
+
+const deckHighlighted = {
+	fontWeight: 200,
+}
+const deckNotHighlighted = {
+	fontWeight: 100,
+	color: 'grey',
 }

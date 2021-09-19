@@ -1,15 +1,17 @@
 import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
 
+import { C } from '/imports/startup/globalConstants'
+
 // ------------
 
 export const CardCollection = new Mongo.Collection('cards')
 
 CardCollection.before.insert(function (userId, doc) {
 	doc.createdAt = new Date()
-	doc.interval = doc.interval || 0
-	doc.repetition = doc.repetition || 0
-	doc.efactor = doc.efactor || 2.5
+	doc.interval = doc.interval || C.sm2.initInterval
+	doc.repetition = doc.repetition || C.sm2.initRepetition
+	doc.efactor = doc.efactor || C.sm2.initEfactor
 	doc.dueDate = doc.dueDate || new Date()
 })
 

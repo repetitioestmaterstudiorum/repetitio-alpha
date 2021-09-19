@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 import React, { useState } from 'react'
-
-import { Header } from '/imports/ui/components/Header.jsx'
+import Swal from 'sweetalert2'
 
 // ------------
 
@@ -12,12 +11,26 @@ export const Login = () => {
 	const handleSubmit = e => {
 		e.preventDefault()
 
-		Meteor.loginWithPassword(username, password)
+		Meteor.loginWithPassword(username, password, err => {
+			debug('test')
+			if (err) {
+				debug(`Error logging in using username ${username} and password ${password}`)
+
+				Swal.fire({
+					title: 'Login failure:',
+					text: err.message || 'Unknown error!',
+					icon: 'error',
+					confirmButtonText: 'Retry',
+				})
+
+				setUsername('')
+				setPassword('')
+			}
+		})
 	}
 
 	return (
 		<>
-			<Header />
 			<form onSubmit={handleSubmit}>
 				<label htmlFor='username'>Username</label>
 				<input

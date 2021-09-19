@@ -6,9 +6,9 @@ import { CardCollection } from '/imports/api/collections/cardCollection.js'
 // ------------
 
 Meteor.publish('decks', function () {
-	return DeckCollection.find({ userId: this.userId })
+	return DeckCollection.find({ deleted: { $ne: true }, userId: this.userId })
 })
 
 Meteor.publish('cards', function () {
-	return CardCollection.find({ userId: this.userId })
+	return CardCollection.find({ deleted: { $ne: true }, userId: this.userId })
 })

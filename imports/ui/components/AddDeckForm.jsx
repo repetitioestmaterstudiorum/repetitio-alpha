@@ -1,18 +1,24 @@
 import React, { useState } from 'react'
-
-import { DeckCollection } from '/imports/api/collections/deckCollection.js'
+import Swal from 'sweetalert2'
 
 // ------------
 
-export const DeckForm = () => {
+export const AddDeckForm = () => {
 	const [title, setTitle] = useState('')
 
 	const handleSubmit = e => {
 		e.preventDefault()
 
-		if (!title) return
+		if (!title) {
+			return Swal.fire({
+				title: 'Could not add deck:',
+				text: 'Missing title!',
+				icon: 'error',
+				confirmButtonText: 'Retry',
+			})
+		}
 
-		DeckCollection.insert({ title: title.trim() })
+		Meteor.call('addDeck', title)
 
 		setTitle('')
 	}

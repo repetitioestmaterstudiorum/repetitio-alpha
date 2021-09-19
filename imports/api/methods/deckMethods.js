@@ -7,6 +7,13 @@ import { deleteDecksCards } from '/imports/api/methods/cardMethods.js'
 // ------------
 
 Meteor.methods({
+	addDeck(title) {
+		check(title, String)
+
+		if (!this.userId) throw new Meteor.Error('Not authorized.')
+
+		DeckCollection.insert({ title: title.trim(), userId: this.userId })
+	},
 	deleteDeck(deckId) {
 		check(deckId, String)
 
