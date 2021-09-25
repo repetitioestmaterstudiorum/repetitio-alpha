@@ -1,4 +1,3 @@
-import { Meteor } from 'meteor/meteor'
 import React, { useContext } from 'react'
 
 import { Context } from '/imports/ui/DataState.jsx'
@@ -18,11 +17,7 @@ export const DeckOverview = () => {
 				<hr style={C.styles.hr} />
 
 				{decks.map(deck => (
-					<DeckRow
-						key={deck._id}
-						deck={deck}
-						onDeleteClick={() => Meteor.call('deleteDeck', deck._id)}
-					/>
+					<DeckRow key={deck._id} deck={deck} />
 				))}
 			</div>
 

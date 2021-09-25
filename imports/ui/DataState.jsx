@@ -14,6 +14,7 @@ export const Context = createContext()
 
 export const DataState = ({ children }) => {
 	const [currentDeck, setCurrentDeck] = useState({})
+	const [showBackSideFirst, setShowBackSideFirst] = useState(false)
 
 	const {
 		isLoading,
@@ -84,6 +85,8 @@ export const DataState = ({ children }) => {
 				cardsInCurrentDeck,
 				cardsInCurrentDeckCount,
 				dueInCurrentDeckCount,
+				showBackSideFirst,
+				setShowBackSideFirst,
 				currentDeck,
 				openDeck,
 				nextCardDue,

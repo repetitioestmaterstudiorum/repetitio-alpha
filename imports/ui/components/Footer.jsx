@@ -18,13 +18,15 @@ export const Footer = () => {
 			<hr style={C.styles.hr} />
 
 			<div style={{ display: 'flex', justifyContent: 'center' }}>
-				<button style={C.styles.uiButton} onClick={handleLogout}>
-					&#128274; lock
+				<button style={C.styles.regularButton} onClick={handleLogout}>
+					{/* lock icon */}
+					&#128274; Log out
 				</button>
 				{/* if not home, show a link back to it */}
 				{useLocation().pathname.match(/deck/) && (
 					<Link to='/'>
-						<button style={C.styles.uiButton}>&#128281; Deck overview</button>
+						{/* home icon */}
+						<button style={C.styles.regularButton}>&#127968; Deck overview</button>
 					</Link>
 				)}
 			</div>

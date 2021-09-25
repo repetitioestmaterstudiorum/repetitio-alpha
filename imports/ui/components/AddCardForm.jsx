@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, createRef } from 'react'
 import Swal from 'sweetalert2'
+
+import { C } from '/imports/startup/client/clientConstants.js'
 
 // ------------
 
@@ -7,8 +9,12 @@ export const AddCardForm = ({ deckId }) => {
 	const [front, setFront] = useState('')
 	const [back, setBack] = useState('')
 
+	const frontInput = createRef()
+
 	const handleSubmit = e => {
 		e.preventDefault()
+
+		frontInput.current.focus()
 
 		if (!front || !back) {
 			return Swal.fire({
@@ -26,22 +32,33 @@ export const AddCardForm = ({ deckId }) => {
 	}
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<input
-				type='front'
-				placeholder='Front of your new deck'
-				value={front}
-				onChange={e => setFront(e.target.value)}
-			/>
+		<div>
+			<details>
+				<summary onClick={() => setTimeout(() => frontInput.current.focus())}>
+					Add a new Card
+				</summary>
+				<form onSubmit={handleSubmit} style={C.styles.uiForm}>
+					<textarea
+						ref={frontInput}
+						type='front'
+						placeholder='Front of your new card'
+						value={front}
+						onChange={e => setFront(e.target.value)}
+						style={{ width: '100vw', maxWidth: '400px' }}
+					/>
 
-			<input
-				type='back'
-				placeholder='Back of your new deck'
-				value={back}
-				onChange={e => setBack(e.target.value)}
-			/>
+					<textarea
+						type='back'
+						placeholder='Back of your new card'
+						value={back}
+						onChange={e => setBack(e.target.value)}
+					/>
 
-			<button type='submit'>&#10133; Add Card</button>
-		</form>
+					<button type='submit' style={C.styles.regularButton}>
+						&#10133; Add Card
+					</button>
+				</form>
+			</details>
+		</div>
 	)
 }

@@ -1,15 +1,23 @@
-/* water.css overwrites */
-
 @media (prefers-color-scheme: dark) {
 	:root {
 		--background-body: rgb(46, 46, 46);
 	}
+	.swal2-title {
+		color: var(--text-main);
+	}
+	.swal2-html-container {
+		color: var(--text-main);
+	}
+	.swal2-popup {
+		/* background-color: inherit; */
+		background-color: var(--background-body);
+	}
 }
 
-/* global style */
 * {
 	font-family: Helvetica, sans-serif;
 	font-size: 16px;
+	font-weight: 200;
 }
 
 body {
@@ -28,10 +36,14 @@ h2 {
 	font-size: 1.3rem;
 }
 
-p {
-	font-weight: 200;
-}
-
 a:hover {
 	text-decoration: none;
+}
+
+details {
+	margin: 0.5rem 0;
+}
+
+input {
+	margin-right: 0;
 }

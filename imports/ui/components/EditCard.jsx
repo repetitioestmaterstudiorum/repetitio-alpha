@@ -1,11 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, createRef } from 'react'
 import Swal from 'sweetalert2'
+
+import { C } from '/imports/startup/client/clientConstants.js'
 
 // ------------
 
 export const EditCard = () => {
 	const [front, setFront] = useState('')
 	const [back, setBack] = useState('')
+
+	const frontInput = createRef()
 
 	const handleSubmit = e => {
 		e.preventDefault()
@@ -18,32 +22,43 @@ export const EditCard = () => {
 				confirmButtonText: 'Retry',
 			})
 		}
-
-		console.log(front, back)
 	}
 
 	return (
 		<>
-			<form onSubmit={handleSubmit}>
-				<input
-					type='front'
-					placeholder='Search the front'
-					value={front}
-					onChange={e => setFront(e.target.value)}
-				/>
+			<div>
+				<details>
+					<summary onClick={() => setTimeout(() => frontInput.current.focus())}>
+						Edit Card in deck
+					</summary>
+					<form onSubmit={handleSubmit} style={C.styles.uiForm}>
+						<input
+							ref={frontInput}
+							type='front'
+							placeholder='Keyword(s) on the front'
+							value={front}
+							onChange={e => setFront(e.target.value)}
+						/>
 
-				<input
-					type='back'
-					placeholder='Search the back'
-					value={back}
-					onChange={e => setBack(e.target.value)}
-				/>
+						<input
+							type='back'
+							placeholder='Keyword(s) on the back'
+							value={back}
+							onChange={e => setBack(e.target.value)}
+						/>
 
-				<button type='submit'>&#128269; Find Card</button>
-			</form>
-
-			<p>{front}</p>
-			<p>{back}</p>
+						<button type='submit' style={C.styles.regularButton}>
+							&#128269; Find Card
+						</button>
+					</form>
+				</details>
+			</div>
+			{front || back ? (
+				<div>
+					<p>{front}</p>
+					<p>{back}</p>
+				</div>
+			) : null}
 		</>
 	)
 }

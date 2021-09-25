@@ -1,4 +1,7 @@
-import React, { useContext, useEffect } from 'react'
+import { Meteor } from 'meteor/meteor'
+import React, { useContext, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import Swal from 'sweetalert2/src/sweetalert2.js'
 
 import { Context } from '/imports/ui/DataState.jsx'
 import { AddCardForm } from '/imports/ui/components/AddCardForm.jsx'
@@ -13,27 +16,94 @@ export const EditDeck = ({ match }) => {
 		params: { deckId },
 	} = match
 
-	const { currentDeck, openDeck, cardsInCurrentDeckCount } = useContext(Context)
+	const history = useHistory()
+
+	const {
+		currentDeck,
+		openDeck,
+		dueInCurrentDeckCount,
+		cardsInCurrentDeckCount,
+		showBackSideFirst,
+		setShowBackSideFirst,
+	} = useContext(Context)
 
 	useEffect(() => openDeck(deckId), [deckId])
 
+	const handleDeleteDeckClick = () => {
+		const deckTitle = currentDeck.title
+		Swal.fire({
+			title: `Delete deck "${deckTitle}""`,
+			text: 'Are you very sure? The deck and all its cards will be gone.',
+			icon: 'warning',
+			confirmButtonText: 'Yes....',
+			cancelButtonText: 'No',
+			showCancelButton: true,
+		}).then(result => {
+			if (result.isConfirmed) {
+				Meteor.call('deleteDeck', deckId, err => {
+					console.log('err :>> ', err)
+					if (err) {
+						Swal.fire(
+							'Error!',
+							`The deck "${deckTitle}"" could not be deleted`,
+							'error'
+						)
+					} else {
+						Swal.fire(
+							'Done!',
+							`The deck "${deckTitle}" and all its cards have been deleted`,
+							'success'
+						).then(result => history.push('/'))
+					}
+				})
+			}
+		})
+	}
+
 	return currentDeck?._id ? (
-		<>
-			<h2>Deck: {currentDeck?.title}</h2>
-			<hr style={C.styles.hr} />
+		<div
+			style={{
+				display: 'flex',
+				justifyContent: 'center',
+				alignItems: 'center',
+				flexWrap: 'wrap',
+				flexDirection: 'column',
+				textAlign: 'center',
+			}}
+		>
+			<div>
+				<h2>Deck: {currentDeck?.title}</h2>
+				<p>Total cards in deck: {cardsInCurrentDeckCount}</p>
+				<p>Cards due to study: {dueInCurrentDeckCount}</p>
+				<hr style={C.styles.hr} />
+			</div>
 
-			<p>Total cards in deck: {cardsInCurrentDeckCount}</p>
+			<AddCardForm deckId={deckId} />
 
-			<details style={{ margin: '0.5rem 0' }}>
-				<summary>Add a new Card</summary>
-				<AddCardForm deckId={deckId} />
-			</details>
+			<EditCard />
 
-			<details style={{ margin: '0.5rem 0' }}>
-				<summary>Edit Card in deck</summary>
-				<EditCard />
-			</details>
-		</>
+			<div>
+				<hr style={C.styles.hr} />
+				<p>Some serious settings: </p>
+				<button
+					style={C.styles.regularButton}
+					onClick={() => setShowBackSideFirst(!showBackSideFirst)}
+				>
+					{/* sync arrow icon*/}
+					&#128260; Show back side first{' '}
+					<input
+						type='checkbox'
+						checked={showBackSideFirst}
+						style={{ verticalAlign: 'middle' }}
+						onChange={() => {}}
+					/>
+				</button>
+				<button style={C.styles.regularButton} onClick={handleDeleteDeckClick}>
+					{/* bomb icon*/}
+					&#128163; Delete deck
+				</button>
+			</div>
+		</div>
 	) : (
 		<Loader />
 	)

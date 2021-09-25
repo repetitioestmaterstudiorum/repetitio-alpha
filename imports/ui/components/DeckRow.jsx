@@ -2,10 +2,11 @@ import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 
 import { CardCollection } from '/imports/api/collections/cardCollection.js'
+import { C } from '/imports/startup/client/clientConstants.js'
 
 // ------------
 
-export const DeckRow = ({ deck, onDeleteClick }) => {
+export const DeckRow = ({ deck }) => {
 	const cardCount = CardCollection.find({
 		deckId: deck._id,
 		dueDate: { $lte: new Date() },
@@ -20,29 +21,17 @@ export const DeckRow = ({ deck, onDeleteClick }) => {
 				</span>
 			</div>
 			<div>
-				{/* practice / play icon*/}
-				<Link to={`/deck/${deck._id}`}>
-					<button style={actionButton}>&#9654;</button>{' '}
-				</Link>
-				{/* edit icon*/}
+				{/* tools icon*/}
 				<Link to={`/edit-deck/${deck._id}`}>
-					<button style={actionButton}>&#9997;</button>
+					<button style={C.styles.roundButton}>&#128736;</button>
 				</Link>
-				{/* delete icon*/}
-				<button style={actionButton} onClick={() => onDeleteClick(deck)}>
-					&#10007;
-				</button>
+				{/* rocket icon*/}
+				<Link to={`/deck/${deck._id}`}>
+					<button style={C.styles.roundButton}>&#128640;</button>
+				</Link>
 			</div>
 		</div>
 	)
-}
-
-const actionButton = {
-	margin: '0 0 0 0.4rem',
-	padding: '0.3rem 0.6rem',
-	height: '2.4rem',
-	width: '2.6rem',
-	borderRadius: '2rem',
 }
 
 const deckHighlighted = {

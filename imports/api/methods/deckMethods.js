@@ -20,7 +20,7 @@ Meteor.methods({
 		if (!this.userId) throw new Meteor.Error('Not authorized.')
 
 		const isUsersDeck = !!DeckCollection.findOne(
-			{ _id: deckId, userId: this.userId },
+			{ _id: deckId, userId: this.userId, deleted: { $ne: true } },
 			{ fields: { _id: 1 } }
 		)
 		if (!isUsersDeck) throw new Meteor.Error('Access denied.')

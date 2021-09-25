@@ -23,7 +23,16 @@ export const Deck = ({ match }) => {
 			</h2>
 			<hr style={C.styles.hr} />
 
-			<div>{nextCardDue?._id ? <Card /> : 'Nothing new to learn here today!'}</div>
+			<div>
+				{nextCardDue?._id ? (
+					<Card />
+				) : (
+					<div style={{ textAlign: 'center' }}>
+						<p>&#128079; &#127881; All done for the moment!</p>
+						<p>Go get some &#127867;</p>
+					</div>
+				)}
+			</div>
 		</>
 	) : (
 		<Loader />

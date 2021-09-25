@@ -4,11 +4,14 @@ import { Context } from '/imports/ui/DataState.jsx'
 
 // ------------
 
-export const Card = () => {
-	const [showSolution, setShowSolution] = useState(false)
-	const [revealedAtLeastOnce, setRevealedAtLeastOnce] = useState(false)
+// todo: high voltage sign button to pick another card? &#9889;
 
-	const { nextCardDue, updateCardAndPickNext } = useContext(Context)
+export const Card = () => {
+	const { nextCardDue, updateCardAndPickNext, showBackSideFirst } = useContext(Context)
+
+	console.log('showBackSideFirst :>> ', showBackSideFirst)
+	const [showBackSide, setShowBackSide] = useState(showBackSideFirst)
+	const [revealedAtLeastOnce, setRevealedAtLeastOnce] = useState(false)
 
 	const keyDownHandler = e => {
 		setRevealedAtLeastOnce(true)
@@ -40,7 +43,7 @@ export const Card = () => {
 	}
 
 	function flipCard() {
-		setShowSolution(!showSolution)
+		setShowBackSide(!showBackSide)
 		setRevealedAtLeastOnce(true)
 	}
 
@@ -50,18 +53,18 @@ export const Card = () => {
 		return () => {
 			document.removeEventListener('keydown', keyDownHandler)
 		}
-	}, [showSolution])
+	}, [showBackSide])
 
 	useEffect(() => {
-		setShowSolution(false)
+		setShowBackSide(false)
 		setRevealedAtLeastOnce(false)
 	}, [nextCardDue?._id, updateCardAndPickNext])
 
 	return (
 		<div style={cardDiv}>
 			<div style={cardContentDiv} onClick={() => flipCard()}>
-				<p style={{ fontSize: '2rem' }} unselectable='on'>
-					{showSolution ? nextCardDue.back : nextCardDue.front}
+				<p style={{ fontSize: '2rem', whiteSpace: 'pre-wrap' }} unselectable='on'>
+					{showBackSide ? nextCardDue.back : nextCardDue.front}
 				</p>
 			</div>
 			<div style={gradeButtonsDiv}>

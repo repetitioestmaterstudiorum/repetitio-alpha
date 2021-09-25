@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import Swal from 'sweetalert2'
 
 // ------------
@@ -8,14 +9,13 @@ export const Login = () => {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 
+	const history = useHistory()
+
 	const handleSubmit = e => {
 		e.preventDefault()
 
 		Meteor.loginWithPassword(username, password, err => {
-			debug('test')
 			if (err) {
-				debug(`Error logging in using username ${username} and password ${password}`)
-
 				Swal.fire({
 					title: 'Login failure:',
 					text: err.message || 'Unknown error!',
@@ -25,6 +25,8 @@ export const Login = () => {
 
 				setUsername('')
 				setPassword('')
+			} else {
+				history.push('/')
 			}
 		})
 	}

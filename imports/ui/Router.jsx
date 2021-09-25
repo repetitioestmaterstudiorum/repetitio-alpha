@@ -24,7 +24,6 @@ export const Routes = () => {
 				<Header />
 				{isLoggedIn ? (
 					<>
-						<Redirect to='/' />
 						<DataState>
 							<Switch>
 								<Route exact path='/' component={DeckOverview} />
