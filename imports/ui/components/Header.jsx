@@ -1,10 +1,15 @@
 import React from 'react'
+import { useLocation } from 'react-router-dom'
 
 // ------------
 
 export const Header = () => (
 	<>
-		{/* coffee icon */}
-		<h1>&#9749; repetitio</h1>
+		{!useLocation().pathname.match(/\/deck\//) && (
+			<h1>
+				{/* coffee icon */}
+				&#9749; repetitio
+			</h1>
+		)}
 	</>
 )

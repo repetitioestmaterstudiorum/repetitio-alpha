@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import Swal from 'sweetalert2/src/sweetalert2.js'
 
@@ -7,7 +7,7 @@ import { Context } from '/imports/ui/DataState.jsx'
 import { AddCardForm } from '/imports/ui/components/AddCardForm.jsx'
 import { C } from '/imports/startup/client/clientConstants.js'
 import { Loader } from '/imports/ui/components/Loader.jsx'
-import { EditCard } from '/imports/ui/components/EditCard.jsx'
+import { FindCard } from '/imports/ui/components/FindCard.jsx'
 
 // ------------
 
@@ -16,19 +16,12 @@ export const EditDeck = ({ match }) => {
 		params: { deckId },
 	} = match
 
+	const { setCurrentDeckId, currentDeck, dueCardsInCurrentDeckCount, cardsInCurrentDeckCount } =
+		useContext(Context)
+
+	useEffect(() => setCurrentDeckId(deckId), [deckId])
+
 	const history = useHistory()
-
-	const {
-		currentDeck,
-		openDeck,
-		dueInCurrentDeckCount,
-		cardsInCurrentDeckCount,
-		showBackSideFirst,
-		setShowBackSideFirst,
-	} = useContext(Context)
-
-	useEffect(() => openDeck(deckId), [deckId])
-
 	const handleDeleteDeckClick = () => {
 		const deckTitle = currentDeck.title
 		Swal.fire({
@@ -74,13 +67,13 @@ export const EditDeck = ({ match }) => {
 			<div>
 				<h2>Deck: {currentDeck?.title}</h2>
 				<p>Total cards in deck: {cardsInCurrentDeckCount}</p>
-				<p>Cards due to study: {dueInCurrentDeckCount}</p>
+				<p>Cards due to study: {dueCardsInCurrentDeckCount}</p>
 				<hr style={C.styles.hr} />
 			</div>
 
 			<AddCardForm deckId={deckId} />
 
-			<EditCard />
+			<FindCard />
 
 			<div>
 				<hr style={C.styles.hr} />
@@ -95,13 +88,13 @@ export const EditDeck = ({ match }) => {
 				>
 					<button
 						style={C.styles.regularButton}
-						onClick={() => setShowBackSideFirst(!showBackSideFirst)}
+						onClick={() => Meteor.call('invertShowBackSideFirst', currentDeck)}
 					>
 						{/* sync arrow icon*/}
 						&#128260; Back side first{' '}
 						<input
 							type='checkbox'
-							checked={showBackSideFirst}
+							checked={currentDeck.showBackSideFirst || false}
 							style={{ verticalAlign: 'middle' }}
 							onChange={() => {}}
 						/>

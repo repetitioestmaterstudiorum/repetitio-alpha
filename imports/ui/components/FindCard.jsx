@@ -5,7 +5,7 @@ import { C } from '/imports/startup/client/clientConstants.js'
 
 // ------------
 
-export const EditCard = () => {
+export const FindCard = () => {
 	const [front, setFront] = useState('')
 	const [back, setBack] = useState('')
 

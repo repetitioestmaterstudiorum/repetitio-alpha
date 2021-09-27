@@ -12,28 +12,27 @@ export const Deck = ({ match }) => {
 		params: { deckId },
 	} = match
 
-	const { currentDeck, openDeck, nextCardDue, dueInCurrentDeckCount } = useContext(Context)
+	const { dueCardsInCurrentDeck, setCurrentDeckId, currentDeck, dueCardsInCurrentDeckCount } =
+		useContext(Context)
 
-	useEffect(() => openDeck(deckId), [deckId])
+	useEffect(() => setCurrentDeckId(deckId), [deckId])
 
 	return currentDeck?._id ? (
-		<>
+		<div style={{ height: '100%', minHeight: '100%' }}>
 			<h2>
-				Deck: {currentDeck?.title} ({dueInCurrentDeckCount})
+				Deck: {currentDeck?.title} ({dueCardsInCurrentDeckCount})
 			</h2>
 			<hr style={C.styles.hr} />
 
-			<div>
-				{nextCardDue?._id ? (
-					<Card />
-				) : (
-					<div style={{ textAlign: 'center' }}>
-						<p>&#128079; &#127881; All done for the moment!</p>
-						<p>Go get some &#127867;</p>
-					</div>
-				)}
-			</div>
-		</>
+			{dueCardsInCurrentDeck[0]?._id ? (
+				<Card />
+			) : (
+				<div style={{ textAlign: 'center' }}>
+					<p>&#128079; &#127881; All done for the moment!</p>
+					<p>Go get some &#127867;</p>
+				</div>
+			)}
+		</div>
 	) : (
 		<Loader />
 	)

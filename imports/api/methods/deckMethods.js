@@ -28,4 +28,23 @@ Meteor.methods({
 		DeckCollection.update({ _id: deckId }, { $set: { deleted: true } })
 		deleteDecksCards(deckId)
 	},
+	invertShowBackSideFirst(deck) {
+		check(deck, Object)
+		check(deck?._id, String)
+		check(!deck?.showBackSideFirst, Boolean)
+
+		if (!this.userId) throw new Meteor.Error('Not authorized.')
+
+		// todo: generalize and reuse code here
+		const isUsersDeck = !!DeckCollection.findOne(
+			{ _id: deck?._id, userId: this.userId, deleted: { $ne: true } },
+			{ fields: { _id: 1 } }
+		)
+		if (!isUsersDeck) throw new Meteor.Error('Access denied.')
+
+		DeckCollection.update(
+			{ _id: deck._id },
+			{ $set: { showBackSideFirst: !deck.showBackSideFirst } }
+		)
+	},
 })

@@ -4,6 +4,6 @@ import React from 'react'
 
 export const Loader = () => (
 	<div style={{ display: 'flex', justifyContent: 'center' }}>
-		<p>Loading ... </p>
+		<h2>Loading ... </h2>
 	</div>
 )

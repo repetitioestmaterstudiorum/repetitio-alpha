@@ -1,53 +1,23 @@
 import React, { useContext, useEffect, useState } from 'react'
 
 import { Context } from '/imports/ui/DataState.jsx'
+import { Loader } from '/imports/ui/components/Loader.jsx'
 
 // ------------
 
 // todo: high voltage sign button to pick another card? &#9889;
 
 export const Card = () => {
-	const { nextCardDue, updateCardAndPickNext, showBackSideFirst } = useContext(Context)
+	const { cardsLoading, dueCardsInCurrentDeck, updateCardAndPickNext, currentDeck, forceUpdate } =
+		useContext(Context)
 
-	const [showBackSide, setShowBackSide] = useState(showBackSideFirst)
-	const [revealedAtLeastOnce, setRevealedAtLeastOnce] = useState(false)
+	const [showBackSide, setShowBackSide] = useState(null)
+	const [revealedAtLeastOnce, setRevealedAtLeastOnce] = useState(null)
 
-	const keyDownHandler = e => {
-		switch (e.keyCode) {
-			case 32:
-				setRevealedAtLeastOnce(true)
-				flipCard()
-				break
-			case 48:
-				updateCardAndPickNext(nextCardDue, 0)
-				break
-			case 192: // sign left of number 1 on querty keyboard shall behave like key 0 for UX
-				updateCardAndPickNext(nextCardDue, 0)
-				break
-			case 49:
-				updateCardAndPickNext(nextCardDue, 1)
-				break
-			case 50:
-				updateCardAndPickNext(nextCardDue, 2)
-				break
-			case 51:
-				updateCardAndPickNext(nextCardDue, 3)
-				break
-			case 52:
-				updateCardAndPickNext(nextCardDue, 4)
-				break
-			case 53:
-				updateCardAndPickNext(nextCardDue, 5)
-				break
-			default:
-				break
-		}
-	}
-
-	function flipCard() {
-		setShowBackSide(!showBackSide)
-		setRevealedAtLeastOnce(true)
-	}
+	useEffect(() => {
+		setShowBackSide(currentDeck?.showBackSideFirst)
+		setRevealedAtLeastOnce(false)
+	}, [dueCardsInCurrentDeck[0]?._id, updateCardAndPickNext])
 
 	useEffect(() => {
 		document.addEventListener('keydown', keyDownHandler, false)
@@ -57,62 +27,76 @@ export const Card = () => {
 		}
 	}, [showBackSide])
 
-	useEffect(() => {
-		setShowBackSide(showBackSideFirst)
-		setRevealedAtLeastOnce(false)
-	}, [nextCardDue?._id, updateCardAndPickNext])
+	const keyDownHandler = e => {
+		if (!revealedAtLeastOnce && e.keyCode !== 32) return
 
-	return (
+		const buttonChoices = {
+			32: () => flipCard(),
+			48: () => callUpdateCardAndPickNext(0),
+			192: () => callUpdateCardAndPickNext(0),
+			49: () => callUpdateCardAndPickNext(1),
+			50: () => callUpdateCardAndPickNext(2),
+			51: () => callUpdateCardAndPickNext(3),
+			52: () => callUpdateCardAndPickNext(4),
+			53: () => callUpdateCardAndPickNext(5),
+		}
+
+		const buttonChoice = buttonChoices[e.keyCode]
+
+		if (buttonChoice) {
+			e.preventDefault()
+			buttonChoice()
+		}
+	}
+
+	const flipCard = () => {
+		setRevealedAtLeastOnce(true)
+		setShowBackSide(!showBackSide)
+	}
+
+	const callUpdateCardAndPickNext = choice => {
+		updateCardAndPickNext(dueCardsInCurrentDeck[0], choice)
+	}
+
+	const buttonData = [
+		{ updateCardChoice: 0, bgColor: '#3a0101' },
+		{ updateCardChoice: 1, bgColor: '#630202' },
+		{ updateCardChoice: 2, bgColor: '#633802' },
+		{ updateCardChoice: 3, bgColor: '#635802' },
+		{ updateCardChoice: 4, bgColor: '#3d6302' },
+		{ updateCardChoice: 5, bgColor: '#026916' },
+	]
+
+	const ChoiceButton = ({ bD }) => (
+		<button
+			disabled={!revealedAtLeastOnce}
+			style={{ ...gradeButton, backgroundColor: bD.bgColor }}
+			onClick={() => callUpdateCardAndPickNext(bD.updateCardChoice)}
+		>
+			{bD.updateCardChoice}
+		</button>
+	)
+
+	return cardsLoading ? (
+		<Loader />
+	) : (
 		<div style={cardDiv}>
 			<div style={cardContentDiv} onClick={() => flipCard()}>
 				<p style={{ fontSize: '2rem', whiteSpace: 'pre-wrap' }} unselectable='on'>
-					{showBackSide ? nextCardDue.back : nextCardDue.front}
+					{showBackSide ? dueCardsInCurrentDeck[0].back : dueCardsInCurrentDeck[0].front}
 				</p>
 			</div>
 			<div style={gradeButtonsDiv}>
-				<button
-					disabled={!revealedAtLeastOnce}
-					style={{ ...gradeButtons, backgroundColor: '#3a0101' }}
-					onClick={() => updateCardAndPickNext(nextCardDue, 0)}
-				>
-					0
-				</button>
-				<button
-					disabled={!revealedAtLeastOnce}
-					style={{ ...gradeButtons, backgroundColor: '#630202' }}
-					onClick={() => updateCardAndPickNext(nextCardDue, 1)}
-				>
-					1
-				</button>
-				<button
-					disabled={!revealedAtLeastOnce}
-					style={{ ...gradeButtons, backgroundColor: '#633802' }}
-					onClick={() => updateCardAndPickNext(nextCardDue, 2)}
-				>
-					2
-				</button>
+				{/* buttons for not remembered card */}
+				{buttonData.slice(0, 3).map((bD, i) => (
+					<ChoiceButton key={i} bD={bD} />
+				))}
+				{/* visual separator */}
 				<p style={{ margin: '0 0.4rem', color: 'grey' }}>{'|'}</p>
-				<button
-					disabled={!revealedAtLeastOnce}
-					style={{ ...gradeButtons, backgroundColor: '#635802' }}
-					onClick={() => updateCardAndPickNext(nextCardDue, 3)}
-				>
-					3
-				</button>
-				<button
-					disabled={!revealedAtLeastOnce}
-					style={{ ...gradeButtons, backgroundColor: '#3d6302' }}
-					onClick={() => updateCardAndPickNext(nextCardDue, 4)}
-				>
-					4
-				</button>
-				<button
-					disabled={!revealedAtLeastOnce}
-					style={{ ...gradeButtons, backgroundColor: '#026916' }}
-					onClick={() => updateCardAndPickNext(nextCardDue, 5)}
-				>
-					5
-				</button>
+				{/* buttons for remembered card */}
+				{buttonData.slice(3, 6).map((bD, i) => (
+					<ChoiceButton key={i} bD={bD} />
+				))}
 			</div>
 		</div>
 	)
@@ -121,11 +105,12 @@ export const Card = () => {
 const cardDiv = {
 	display: 'flex',
 	flexWrap: 'wrap',
+	height: '84%',
+	marginTop: '-5%',
 }
 
 const cardContentDiv = {
 	width: '100%',
-	minHeight: '200px',
 	display: 'flex',
 	justifyContent: 'center',
 	alignItems: 'center',
@@ -137,9 +122,12 @@ const gradeButtonsDiv = {
 	justifyContent: 'center',
 	alignItems: 'center',
 	padding: '0.5rem 0 0',
+	position: 'absolute',
+	bottom: '2%',
+	left: '0',
 }
 
-const gradeButtons = {
+const gradeButton = {
 	color: '#fff',
 	margin: '0 0.3rem 0.3rem',
 	padding: '0.3rem 1rem',

@@ -7,6 +7,7 @@ export const DeckCollection = new Mongo.Collection('decks')
 
 DeckCollection.before.insert(function (userId, doc) {
 	doc.createdAt = new Date()
+	doc.showBackSideFirst = doc.showBackSideFirst || false
 })
 
 DeckCollection.before.update(function (userId, doc, fieldNames, modifier, options) {
