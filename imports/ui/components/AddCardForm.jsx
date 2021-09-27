@@ -44,7 +44,7 @@ export const AddCardForm = ({ deckId }) => {
 						placeholder='Front of your new card'
 						value={front}
 						onChange={e => setFront(e.target.value)}
-						style={{ width: '100vw', maxWidth: '400px' }}
+						style={{ width: '95vw', maxWidth: '400px' }}
 					/>
 
 					<textarea

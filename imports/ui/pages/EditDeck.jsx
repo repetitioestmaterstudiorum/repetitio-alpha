@@ -84,24 +84,33 @@ export const EditDeck = ({ match }) => {
 
 			<div>
 				<hr style={C.styles.hr} />
-				<p>Some serious settings: </p>
-				<button
-					style={C.styles.regularButton}
-					onClick={() => setShowBackSideFirst(!showBackSideFirst)}
+				<p>Deck settings: </p>
+				<div
+					style={{
+						display: 'flex',
+						alignItems: 'center',
+						flexWrap: 'wrap',
+						flexDirection: 'row',
+					}}
 				>
-					{/* sync arrow icon*/}
-					&#128260; Show back side first{' '}
-					<input
-						type='checkbox'
-						checked={showBackSideFirst}
-						style={{ verticalAlign: 'middle' }}
-						onChange={() => {}}
-					/>
-				</button>
-				<button style={C.styles.regularButton} onClick={handleDeleteDeckClick}>
-					{/* bomb icon*/}
-					&#128163; Delete deck
-				</button>
+					<button
+						style={C.styles.regularButton}
+						onClick={() => setShowBackSideFirst(!showBackSideFirst)}
+					>
+						{/* sync arrow icon*/}
+						&#128260; Back side first{' '}
+						<input
+							type='checkbox'
+							checked={showBackSideFirst}
+							style={{ verticalAlign: 'middle' }}
+							onChange={() => {}}
+						/>
+					</button>
+					<button style={C.styles.regularButton} onClick={handleDeleteDeckClick}>
+						{/* bomb icon*/}
+						&#128163; Delete
+					</button>
+				</div>
 			</div>
 		</div>
 	) : (

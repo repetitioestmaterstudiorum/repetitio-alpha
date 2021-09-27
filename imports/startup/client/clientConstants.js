@@ -10,6 +10,7 @@ C.styles = {
 	regularButton: {
 		padding: '0.4rem 1rem',
 		marginBottom: '0',
+		height: '42px',
 	},
 	roundButton: {
 		margin: '0 0 0 0.4rem',

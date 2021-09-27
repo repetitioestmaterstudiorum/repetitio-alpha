@@ -9,17 +9,19 @@ import { Context } from '/imports/ui/DataState.jsx'
 export const Card = () => {
 	const { nextCardDue, updateCardAndPickNext, showBackSideFirst } = useContext(Context)
 
-	console.log('showBackSideFirst :>> ', showBackSideFirst)
 	const [showBackSide, setShowBackSide] = useState(showBackSideFirst)
 	const [revealedAtLeastOnce, setRevealedAtLeastOnce] = useState(false)
 
 	const keyDownHandler = e => {
-		setRevealedAtLeastOnce(true)
 		switch (e.keyCode) {
 			case 32:
+				setRevealedAtLeastOnce(true)
 				flipCard()
 				break
 			case 48:
+				updateCardAndPickNext(nextCardDue, 0)
+				break
+			case 192: // sign left of number 1 on querty keyboard shall behave like key 0 for UX
 				updateCardAndPickNext(nextCardDue, 0)
 				break
 			case 49:
@@ -48,15 +50,15 @@ export const Card = () => {
 	}
 
 	useEffect(() => {
-		document.addEventListener('keydown', keyDownHandler)
+		document.addEventListener('keydown', keyDownHandler, false)
 
 		return () => {
-			document.removeEventListener('keydown', keyDownHandler)
+			document.removeEventListener('keydown', keyDownHandler, false)
 		}
 	}, [showBackSide])
 
 	useEffect(() => {
-		setShowBackSide(false)
+		setShowBackSide(showBackSideFirst)
 		setRevealedAtLeastOnce(false)
 	}, [nextCardDue?._id, updateCardAndPickNext])
 

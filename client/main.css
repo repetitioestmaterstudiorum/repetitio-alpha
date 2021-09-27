@@ -2,15 +2,15 @@
 	:root {
 		--background-body: rgb(46, 46, 46);
 	}
+	/* !important is necessary here because swal's CSS seems to be bundled after this file */
 	.swal2-title {
-		color: var(--text-main);
+		color: var(--text-main) !important;
 	}
 	.swal2-html-container {
-		color: var(--text-main);
+		color: var(--text-main) !important;
 	}
 	.swal2-popup {
-		/* background-color: inherit; */
-		background-color: var(--background-body);
+		background-color: var(--background-body) !important;
 	}
 }
 
