@@ -5,19 +5,18 @@ import { Loader } from '/imports/ui/components/Loader.jsx'
 
 // ------------
 
-// todo: high voltage sign button to pick another card? &#9889;
-
 export const Card = () => {
-	const { cardsLoading, dueCardsInCurrentDeck, updateCardAndPickNext, currentDeck, forceUpdate } =
-		useContext(Context)
+	const { isLoading, cardQueue, updateCardAndPickNext, currentDeck } = useContext(Context)
 
 	const [showBackSide, setShowBackSide] = useState(null)
 	const [revealedAtLeastOnce, setRevealedAtLeastOnce] = useState(null)
 
+	const cardQueueOfDeck = cardQueue[currentDeck._id]
+
 	useEffect(() => {
 		setShowBackSide(currentDeck?.showBackSideFirst)
 		setRevealedAtLeastOnce(false)
-	}, [dueCardsInCurrentDeck[0]?._id, updateCardAndPickNext])
+	}, [cardQueueOfDeck[0]?._id, updateCardAndPickNext])
 
 	useEffect(() => {
 		document.addEventListener('keydown', keyDownHandler, false)
@@ -54,9 +53,7 @@ export const Card = () => {
 		setShowBackSide(!showBackSide)
 	}
 
-	const callUpdateCardAndPickNext = choice => {
-		updateCardAndPickNext(dueCardsInCurrentDeck[0], choice)
-	}
+	const callUpdateCardAndPickNext = choice => updateCardAndPickNext(cardQueueOfDeck[0], choice)
 
 	const buttonData = [
 		{ updateCardChoice: 0, bgColor: '#3a0101' },
@@ -77,13 +74,13 @@ export const Card = () => {
 		</button>
 	)
 
-	return cardsLoading ? (
+	return isLoading ? (
 		<Loader />
 	) : (
 		<div style={cardDiv}>
 			<div style={cardContentDiv} onClick={() => flipCard()}>
 				<p style={{ fontSize: '2rem', whiteSpace: 'pre-wrap' }} unselectable='on'>
-					{showBackSide ? dueCardsInCurrentDeck[0].back : dueCardsInCurrentDeck[0].front}
+					{showBackSide ? cardQueueOfDeck[0].back : cardQueueOfDeck[0].front}
 				</p>
 			</div>
 			<div style={gradeButtonsDiv}>

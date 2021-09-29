@@ -12,22 +12,47 @@ export const Deck = ({ match }) => {
 		params: { deckId },
 	} = match
 
-	const { dueCardsInCurrentDeck, setCurrentDeckId, currentDeck, dueCardsInCurrentDeckCount } =
+	const { cardQueue, setCurrentDeckId, currentDeck, dueCardsInCurrentDeckCount, skipCard } =
 		useContext(Context)
 
 	useEffect(() => setCurrentDeckId(deckId), [deckId])
 
+	const reviewDue = cardQueue[deckId] && !!cardQueue[deckId][0]?._id
+
 	return currentDeck?._id ? (
-		<div style={{ height: '100%', minHeight: '100%' }}>
+		<div style={{ height: reviewDue ? '100%' : '90%' }}>
 			<h2>
 				Deck: {currentDeck?.title} ({dueCardsInCurrentDeckCount})
 			</h2>
 			<hr style={C.styles.hr} />
 
-			{dueCardsInCurrentDeck[0]?._id ? (
-				<Card />
+			{reviewDue ? (
+				<>
+					<Card />
+					<button
+						onClick={() => skipCard()}
+						style={{
+							...C.styles.roundButton,
+							position: 'absolute',
+							bottom: '10%',
+							right: '6%',
+							width: '80px',
+						}}
+					>
+						&#9889;<i>skip</i>
+					</button>
+				</>
 			) : (
-				<div style={{ textAlign: 'center' }}>
+				<div
+					style={{
+						display: 'flex',
+						flexWrap: 'wrap',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center',
+						height: '90%',
+					}}
+				>
 					<p>&#128079; &#127881; All done for the moment!</p>
 					<p>Go get some &#127867;</p>
 				</div>

@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
-import React, { useState, createContext } from 'react'
+import React, { useState, createContext, useReducer } from 'react'
 import { supermemo } from 'supermemo'
 import dayjs from 'dayjs'
 
@@ -11,17 +11,36 @@ import { CardCollection } from '/imports/api/collections/cardCollection.js'
 
 export const Context = createContext()
 
+const queueLimit = 10
+const cardQueue = {} // todo: use indexDb for refresh safety and generally it's cool
+
 export const DataState = ({ children }) => {
+	const [, forceUpdate] = useReducer(x => x + 1, 0)
 	const [currentDeckId, setCurrentDeckId] = useState(null)
 
-	const { decksLoading, decks, decksCount, currentDeck } = useTracker(() => {
+	const {
+		isLoading,
+		decks,
+		decksCount,
+		currentDeck,
+		cardsInCurrentDeck,
+		cardsInCurrentDeckCount,
+		dueCardsInCurrentDeck,
+		dueCardsInCurrentDeckCount,
+	} = useTracker(() => {
 		const decksSubHandler = Meteor.subscribe('decks')
-		if (!decksSubHandler.ready()) {
+		const cardsSubHandler = Meteor.subscribe('cards')
+
+		if (!decksSubHandler.ready() || !cardsSubHandler.ready()) {
 			return {
-				decksLoading: true,
+				isLoading: true,
 				decks: [],
 				decksCount: 0,
 				currentDeck: {},
+				cardsInCurrentDeck: [],
+				cardsInCurrentDeckCount: 0,
+				dueCardsInCurrentDeck: [],
+				dueCardsInCurrentDeckCount: 0,
 			}
 		}
 
@@ -30,53 +49,34 @@ export const DataState = ({ children }) => {
 
 		const currentDeck = DeckCollection.findOne(currentDeckId)
 
-		return {
-			decksLoading: false,
-			decks,
-			decksCount,
-			currentDeck,
-		}
-	})
-
-	const {
-		cardsLoading,
-		cardsInCurrentDeck,
-		cardsInCurrentDeckCount,
-		dueCardsInCurrentDeck,
-		dueCardsInCurrentDeckCount,
-	} = useTracker(() => {
-		const cardsSubHandler = Meteor.subscribe('cards')
-		if (!cardsSubHandler.ready()) {
-			return {
-				cardsLoading: true,
-				cardsInCurrentDeck: [],
-				cardsInCurrentDeckCount: 0,
-				dueCardsInCurrentDeck: [],
-				dueCardsInCurrentDeckCount: 0,
-			}
-		}
-
 		const cardsInCurrentDeckCursor = CardCollection.find({
 			deckId: currentDeck?._id,
 		})
 		const cardsInCurrentDeck = cardsInCurrentDeckCursor.fetch()
 		const cardsInCurrentDeckCount = cardsInCurrentDeckCursor.count()
 
-		const dueInCurrentDeckCursor = CardCollection.find(
+		const dueCardsInCurrentDeck = CardCollection.find(
 			{
 				deckId: currentDeck?._id,
 				dueDate: { $lte: new Date() },
 			},
 			{
-				// hardest, then longest since update, then longest since insertion
-				sort: { efactor: 1, updatedAt: 1, createdAt: 1 },
+				// hardest, then oldest dueDate
+				sort: { efactor: 1, dueDate: 1 },
+				limit: queueLimit,
 			}
-		)
-		const dueCardsInCurrentDeck = dueInCurrentDeckCursor.fetch()
-		const dueCardsInCurrentDeckCount = dueInCurrentDeckCursor.count()
+		).fetch()
+
+		const dueCardsInCurrentDeckCount = CardCollection.find({
+			deckId: currentDeck?._id,
+			dueDate: { $lte: new Date() },
+		}).count()
 
 		return {
-			cardsLoading: false,
+			isLoading: false,
+			decks,
+			decksCount,
+			currentDeck,
 			cardsInCurrentDeck,
 			cardsInCurrentDeckCount,
 			dueCardsInCurrentDeck,
@@ -84,7 +84,22 @@ export const DataState = ({ children }) => {
 		}
 	})
 
-	function updateCardAndPickNext(card, grade) {
+	if (currentDeckId) {
+		if (!cardQueue[currentDeckId]) cardQueue[currentDeckId] = []
+		for (const dC of dueCardsInCurrentDeck) {
+			if (!cardQueue[currentDeckId].map(c => c._id).includes(dC._id)) {
+				cardQueue[currentDeckId].push(dC)
+			}
+		}
+	}
+
+	const skipCard = () => {
+		cardQueue[currentDeckId].shift()
+		forceUpdate()
+	}
+
+	const updateCardAndPickNext = (card, grade) => {
+		cardQueue[currentDeckId].shift()
 		const recalculatedCard = recalculateCard(card, grade)
 		Meteor.call('updateRecalculatedCard', card._id, recalculatedCard)
 	}
@@ -93,18 +108,19 @@ export const DataState = ({ children }) => {
 		<Context.Provider
 			value={{
 				// meteor reactive data
-				decksLoading,
+				isLoading,
 				decks,
 				decksCount,
 				currentDeck,
-				cardsLoading,
 				cardsInCurrentDeck,
 				cardsInCurrentDeckCount,
-				dueCardsInCurrentDeck,
 				dueCardsInCurrentDeckCount,
+				// js array (queue)
+				cardQueue,
 				// react states and functions
 				setCurrentDeckId,
 				updateCardAndPickNext,
+				skipCard,
 			}}
 		>
 			{children}
@@ -117,6 +133,7 @@ const recalculateCard = (card, grade) => {
 	// If answer between 0-2, repeat on the same day.
 	// Otherwise, according to the SM2 algorithm.
 	const { interval, repetition, efactor } = supermemo(card, grade)
+	const roundedEfactor = +efactor.toFixed(2)
 	const dueDate = grade <= 2 ? card.dueDate : dayjs().add(interval, 'day').toDate()
-	return { ...card, interval, repetition, efactor, dueDate }
+	return { ...card, interval, repetition, efactor: roundedEfactor, dueDate }
 }

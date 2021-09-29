@@ -6,7 +6,7 @@ import { C } from '/imports/startup/client/clientConstants.js'
 
 export const DevModeDataReset = () => {
 	return Meteor.isDevelopment ? (
-		<div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+		<div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '1rem' }}>
 			<button
 				style={C.styles.regularButton}
 				onClick={() => {

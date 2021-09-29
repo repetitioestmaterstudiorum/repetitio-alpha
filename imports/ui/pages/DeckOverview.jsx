@@ -9,9 +9,9 @@ import { Loader } from '/imports/ui/components/Loader.jsx'
 // ------------
 
 export const DeckOverview = () => {
-	const { decksLoading, decks, decksCount } = useContext(Context)
+	const { isLoading, decks, decksCount } = useContext(Context)
 
-	return decksLoading ? (
+	return isLoading ? (
 		<Loader />
 	) : (
 		<div>

@@ -17,7 +17,7 @@ export const Footer = () => {
 		<>
 			<hr style={C.styles.hr} />
 
-			<div style={{ display: 'flex', justifyContent: 'center' }}>
+			<div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '1.5rem' }}>
 				<button style={C.styles.regularButton} onClick={handleLogout}>
 					{/* lock icon */}
 					&#128274; Log out
