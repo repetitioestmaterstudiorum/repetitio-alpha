@@ -74,7 +74,7 @@ export const Card = () => {
 		</button>
 	)
 
-	return isLoading ? (
+	return isLoading && cardQueueOfDeck[0]?._id ? (
 		<Loader />
 	) : (
 		<div style={cardDiv}>

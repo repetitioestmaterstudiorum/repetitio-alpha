@@ -16,15 +16,15 @@ export const Login = () => {
 
 		Meteor.loginWithPassword(username, password, err => {
 			if (err) {
+				setUsername('')
+				setPassword('')
+
 				Swal.fire({
 					title: 'Login failure:',
 					text: err.message || 'Unknown error!',
 					icon: 'error',
 					confirmButtonText: 'Retry',
 				})
-
-				setUsername('')
-				setPassword('')
 			} else {
 				history.push('/')
 			}

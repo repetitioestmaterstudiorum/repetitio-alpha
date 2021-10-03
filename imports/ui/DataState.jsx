@@ -11,7 +11,7 @@ import { CardCollection } from '/imports/api/collections/cardCollection.js'
 
 export const Context = createContext()
 
-const queueLimit = 10
+const queueLimit = 20
 const cardQueue = {} // todo: use indexDb for refresh safety and generally it's cool
 
 export const DataState = ({ children }) => {
@@ -25,7 +25,7 @@ export const DataState = ({ children }) => {
 		currentDeck,
 		cardsInCurrentDeck,
 		cardsInCurrentDeckCount,
-		dueCardsInCurrentDeck,
+		dueCardsInCurrentDeckLimited,
 		dueCardsInCurrentDeckCount,
 	} = useTracker(() => {
 		const decksSubHandler = Meteor.subscribe('decks')
@@ -39,7 +39,7 @@ export const DataState = ({ children }) => {
 				currentDeck: {},
 				cardsInCurrentDeck: [],
 				cardsInCurrentDeckCount: 0,
-				dueCardsInCurrentDeck: [],
+				dueCardsInCurrentDeckLimited: [],
 				dueCardsInCurrentDeckCount: 0,
 			}
 		}
@@ -55,7 +55,7 @@ export const DataState = ({ children }) => {
 		const cardsInCurrentDeck = cardsInCurrentDeckCursor.fetch()
 		const cardsInCurrentDeckCount = cardsInCurrentDeckCursor.count()
 
-		const dueCardsInCurrentDeck = CardCollection.find(
+		const dueCardsInCurrentDeckLimited = CardCollection.find(
 			{
 				deckId: currentDeck?._id,
 				dueDate: { $lte: new Date() },
@@ -79,16 +79,22 @@ export const DataState = ({ children }) => {
 			currentDeck,
 			cardsInCurrentDeck,
 			cardsInCurrentDeckCount,
-			dueCardsInCurrentDeck,
+			dueCardsInCurrentDeckLimited,
 			dueCardsInCurrentDeckCount,
 		}
 	})
 
-	if (currentDeckId) {
+	if (currentDeckId && dueCardsInCurrentDeckLimited.length > 0) {
 		if (!cardQueue[currentDeckId]) cardQueue[currentDeckId] = []
-		for (const dC of dueCardsInCurrentDeck) {
-			if (!cardQueue[currentDeckId].map(c => c._id).includes(dC._id)) {
-				cardQueue[currentDeckId].push(dC)
+		const currentQueue = cardQueue[currentDeckId]
+		const cardQueueIds = currentQueue.map(c => c._id)
+		for (
+			let i = 0;
+			currentQueue.length < Math.min(queueLimit, dueCardsInCurrentDeckLimited.length); //  there can be less cards due to review than the queue's limit
+			i++
+		) {
+			if (!cardQueueIds.includes(dueCardsInCurrentDeckLimited[i]._id)) {
+				currentQueue.push(dueCardsInCurrentDeckLimited[i])
 			}
 		}
 	}
