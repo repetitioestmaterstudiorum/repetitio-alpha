@@ -7,6 +7,7 @@ import { DataState } from '/imports/ui/DataState.jsx'
 import { DeckOverview } from '/imports/ui/pages/DeckOverview.jsx'
 import { Login } from '/imports/ui/pages/Login.jsx'
 import { EditDeck } from './pages/EditDeck.jsx'
+import { EditCard } from './pages/EditCard.jsx'
 import { Deck } from './pages/Deck.jsx'
 import { FourOFour } from '/imports/ui/pages/404.jsx'
 import { Header } from '/imports/ui/components/Header.jsx'
@@ -29,6 +30,7 @@ export const Routes = () => {
 								<Route exact path='/' component={DeckOverview} />
 								<Route exact path='/deck/:deckId' component={Deck} />
 								<Route exact path='/edit-deck/:deckId' component={EditDeck} />
+								<Route exact path='/edit-card/:cardId' component={EditCard} />
 								<Route component={FourOFour} />
 							</Switch>
 						</DataState>

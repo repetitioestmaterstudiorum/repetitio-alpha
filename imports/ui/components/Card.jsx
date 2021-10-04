@@ -1,12 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
 
 import { Context } from '/imports/ui/DataState.jsx'
+import { C } from '/imports/startup/client/clientConstants.js'
 import { Loader } from '/imports/ui/components/Loader.jsx'
+import { Link } from 'react-router-dom'
 
 // ------------
 
 export const Card = () => {
-	const { isLoading, cardQueue, updateCardAndPickNext, currentDeck } = useContext(Context)
+	const { isLoading, cardQueue, updateCardAndPickNext, currentDeck, skipCard } =
+		useContext(Context)
 
 	const [showBackSide, setShowBackSide] = useState(null)
 	const [revealedAtLeastOnce, setRevealedAtLeastOnce] = useState(null)
@@ -94,6 +97,14 @@ export const Card = () => {
 				{buttonData.slice(3, 6).map((bD, i) => (
 					<ChoiceButton key={i} bD={bD} />
 				))}
+				<div style={{ bottom: '60px', position: 'absolute' }}>
+					<Link to={`/edit-card/${cardQueueOfDeck[0]._id}`}>
+						<button style={C.styles.roundButton}>&#9997;</button>
+					</Link>
+					<button onClick={() => skipCard()} style={C.styles.roundButton}>
+						&#9889;
+					</button>
+				</div>
 			</div>
 		</div>
 	)

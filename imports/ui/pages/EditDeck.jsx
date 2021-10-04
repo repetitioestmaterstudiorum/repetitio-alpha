@@ -22,10 +22,12 @@ export const EditDeck = ({ match }) => {
 	useEffect(() => setCurrentDeckId(deckId), [deckId])
 
 	const history = useHistory()
-	const handleDeleteDeckClick = () => {
+	const handleDeleteDeckClick = e => {
+		e.preventDefault()
+
 		const deckTitle = currentDeck.title
 		Swal.fire({
-			title: `Delete deck "${deckTitle}""`,
+			title: `Delete deck "${deckTitle}"?`,
 			text: 'Are you very sure? The deck and all its cards will be gone.',
 			icon: 'warning',
 			confirmButtonText: 'Yes....',
@@ -34,13 +36,9 @@ export const EditDeck = ({ match }) => {
 		}).then(result => {
 			if (result.isConfirmed) {
 				Meteor.call('deleteDeck', deckId, err => {
-					console.log('err :>> ', err)
 					if (err) {
-						Swal.fire(
-							'Error!',
-							`The deck "${deckTitle}"" could not be deleted`,
-							'error'
-						)
+						console.error(`Error deleting deck ${deckId}`, err)
+						Swal.fire('Error!', `The deck "${deckTitle}" could not be deleted`, 'error')
 					} else {
 						Swal.fire(
 							'Done!',

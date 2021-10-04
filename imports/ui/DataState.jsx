@@ -12,11 +12,12 @@ import { CardCollection } from '/imports/api/collections/cardCollection.js'
 export const Context = createContext()
 
 const queueLimit = 20
-const cardQueue = {} // todo: use indexDb for refresh safety and generally it's cool
+const cardQueue = {} // todo: use indexDb for refresh safety and generally it's cool?
 
 export const DataState = ({ children }) => {
 	const [, forceUpdate] = useReducer(x => x + 1, 0)
 	const [currentDeckId, setCurrentDeckId] = useState(null)
+	const [cardIdInEditMode, setCardIdInEditMode] = useState(null)
 
 	const {
 		isLoading,
@@ -27,6 +28,7 @@ export const DataState = ({ children }) => {
 		cardsInCurrentDeckCount,
 		dueCardsInCurrentDeckLimited,
 		dueCardsInCurrentDeckCount,
+		cardInEditMode,
 	} = useTracker(() => {
 		const decksSubHandler = Meteor.subscribe('decks')
 		const cardsSubHandler = Meteor.subscribe('cards')
@@ -41,6 +43,7 @@ export const DataState = ({ children }) => {
 				cardsInCurrentDeckCount: 0,
 				dueCardsInCurrentDeckLimited: [],
 				dueCardsInCurrentDeckCount: 0,
+				cardInEditMode: '',
 			}
 		}
 
@@ -72,6 +75,8 @@ export const DataState = ({ children }) => {
 			dueDate: { $lte: new Date() },
 		}).count()
 
+		const cardInEditMode = CardCollection.findOne(cardIdInEditMode)
+
 		return {
 			isLoading: false,
 			decks,
@@ -81,9 +86,11 @@ export const DataState = ({ children }) => {
 			cardsInCurrentDeckCount,
 			dueCardsInCurrentDeckLimited,
 			dueCardsInCurrentDeckCount,
+			cardInEditMode,
 		}
 	})
 
+	// queue refilling
 	if (currentDeckId && dueCardsInCurrentDeckLimited.length > 0) {
 		if (!cardQueue[currentDeckId]) cardQueue[currentDeckId] = []
 		const currentQueue = cardQueue[currentDeckId]
@@ -110,6 +117,23 @@ export const DataState = ({ children }) => {
 		Meteor.call('updateRecalculatedCard', card._id, recalculatedCard)
 	}
 
+	const findCardsInCurrentDeck = ({ frontKeywords, backKeywords }) => {
+		const searchTerms = []
+		if (frontKeywords !== '') searchTerms.push({ front: new RegExp(frontKeywords, 'i') })
+		if (backKeywords !== '') searchTerms.push({ back: new RegExp(backKeywords, 'i') })
+		return CardCollection.find(
+			{
+				deckId: currentDeck?._id,
+				$or: searchTerms,
+			},
+			{
+				// most recently changed first
+				sort: { updateDate: -1 },
+				limit: 10,
+			}
+		).fetch()
+	}
+
 	return (
 		<Context.Provider
 			value={{
@@ -125,8 +149,11 @@ export const DataState = ({ children }) => {
 				cardQueue,
 				// react states and functions
 				setCurrentDeckId,
+				setCardIdInEditMode,
+				cardInEditMode,
 				updateCardAndPickNext,
 				skipCard,
+				findCardsInCurrentDeck,
 			}}
 		>
 			{children}

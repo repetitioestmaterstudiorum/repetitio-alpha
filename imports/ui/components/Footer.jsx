@@ -13,6 +13,9 @@ export const Footer = () => {
 		Meteor.logout()
 	}
 
+	// everwhere except when we're on the start page (which is the deck overview)
+	const showDeckOverviewButton = useLocation().pathname !== '/'
+
 	return (
 		<>
 			<hr style={C.styles.hr} />
@@ -23,7 +26,7 @@ export const Footer = () => {
 					&#128274; Log out
 				</button>
 				{/* if not home, show a link back to it */}
-				{useLocation().pathname.match(/deck/) && (
+				{showDeckOverviewButton && (
 					<Link to='/'>
 						{/* home icon */}
 						<button style={C.styles.regularButton}>&#127968; Deck overview</button>

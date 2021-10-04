@@ -48,6 +48,26 @@ Meteor.methods({
 
 		CardCollection.update({ _id: cardId }, { $set: { deleted: true } })
 	},
+	updateCard(front, back, cardId) {
+		check(front, String)
+		check(back, String)
+		check(cardId, String)
+
+		if (!this.userId) throw new Meteor.Error('Not authorized.')
+
+		const isUsersCard = !!CardCollection.findOne(
+			{ _id: cardId, userId: this.userId },
+			{ fields: { _id: 1 } }
+		)
+		if (!isUsersCard) throw new Meteor.Error('Access denied.')
+
+		CardCollection.update(
+			{ _id: cardId },
+			{
+				$set: { front: front.trim(), back: back.trim() },
+			}
+		)
+	},
 })
 
 export function deleteDecksCards(deckId) {

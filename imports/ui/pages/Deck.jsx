@@ -12,7 +12,7 @@ export const Deck = ({ match }) => {
 		params: { deckId },
 	} = match
 
-	const { cardQueue, setCurrentDeckId, currentDeck, dueCardsInCurrentDeckCount, skipCard } =
+	const { cardQueue, setCurrentDeckId, currentDeck, dueCardsInCurrentDeckCount } =
 		useContext(Context)
 
 	useEffect(() => setCurrentDeckId(deckId), [deckId])
@@ -27,21 +27,7 @@ export const Deck = ({ match }) => {
 			<hr style={C.styles.hr} />
 
 			{reviewDue ? (
-				<>
-					<Card />
-					<button
-						onClick={() => skipCard()}
-						style={{
-							...C.styles.roundButton,
-							position: 'absolute',
-							bottom: '10%',
-							right: '6%',
-							width: '80px',
-						}}
-					>
-						&#9889;<i>skip</i>
-					</button>
-				</>
+				<Card />
 			) : (
 				<div
 					style={{

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 
 import { CardCollection } from '/imports/api/collections/cardCollection.js'
@@ -21,11 +21,11 @@ export const DeckRow = ({ deck }) => {
 				</span>
 			</div>
 			<div>
-				{/* tools icon*/}
+				{/* writing hand icon */}
 				<Link to={`/edit-deck/${deck._id}`}>
-					<button style={C.styles.roundButton}>&#128736;</button>
+					<button style={C.styles.roundButton}>&#9997;</button>
 				</Link>
-				{/* rocket icon*/}
+				{/* rocket icon */}
 				<Link to={`/deck/${deck._id}`}>
 					<button style={C.styles.roundButton}>&#128640;</button>
 				</Link>
