@@ -1,6 +1,7 @@
 {
 	"name": "repetitio",
 	"private": true,
+	"license": "GPLV3",
 	"scripts": {
 		"start": "git pull && npm i && meteor",
 		"dev": "export $(grep -v '^#' .env | xargs) && meteor --exclude-archs web.browser.legacy",
