@@ -3,7 +3,7 @@ import Swal from 'sweetalert2'
 
 import { C } from '/imports/startup/client/clientConstants.js'
 
-// ------------
+// ---
 
 export const AddCardForm = ({ deckId }) => {
 	const [front, setFront] = useState('')

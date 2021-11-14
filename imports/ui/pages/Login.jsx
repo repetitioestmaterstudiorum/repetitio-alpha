@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import Swal from 'sweetalert2'
 
-// ------------
+// ---
 
 export const Login = () => {
 	const [username, setUsername] = useState('')

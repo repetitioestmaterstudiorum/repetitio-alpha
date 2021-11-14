@@ -3,7 +3,7 @@ import { check } from 'meteor/check'
 
 import { CardCollection } from '/imports/api/collections/cardCollection.js'
 
-// ------------
+// ---
 
 Meteor.methods({
 	addCard(front, back, deckId) {

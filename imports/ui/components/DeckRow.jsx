@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { CardCollection } from '/imports/api/collections/cardCollection.js'
 import { C } from '/imports/startup/client/clientConstants.js'
 
-// ------------
+// ---
 
 export const DeckRow = ({ deck }) => {
 	const cardCount = CardCollection.find({

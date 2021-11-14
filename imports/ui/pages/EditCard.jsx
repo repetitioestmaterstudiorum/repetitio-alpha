@@ -7,7 +7,7 @@ import { C } from '/imports/startup/client/clientConstants.js'
 import { Loader } from '/imports/ui/components/Loader.jsx'
 import { Context } from '/imports/ui/DataState.jsx'
 
-// ------------
+// ---
 
 export const EditCard = ({ match }) => {
 	const { cardInEditMode, setCardIdInEditMode } = useContext(Context)
@@ -56,8 +56,7 @@ export const EditCard = ({ match }) => {
 				flexWrap: 'wrap',
 				flexDirection: 'column',
 				textAlign: 'center',
-			}}
-		>
+			}}>
 			<div>
 				<h2>Card:</h2>
 				<form style={C.styles.uiForm}>
@@ -106,8 +105,7 @@ export const EditCard = ({ match }) => {
 						alignItems: 'center',
 						flexWrap: 'wrap',
 						flexDirection: 'row',
-					}}
-				>
+					}}>
 					<button style={C.styles.regularButton} onClick={handleDeleteCardClick}>
 						{/* bomb icon*/}
 						&#128163; Delete

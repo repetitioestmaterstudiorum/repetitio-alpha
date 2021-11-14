@@ -5,7 +5,7 @@ import { C } from '/imports/startup/client/clientConstants.js'
 import { Loader } from '/imports/ui/components/Loader.jsx'
 import { Link } from 'react-router-dom'
 
-// ------------
+// ---
 
 export const Card = () => {
 	const { isLoading, cardQueue, updateCardAndPickNext, currentDeck, skipCard } =
@@ -71,8 +71,7 @@ export const Card = () => {
 		<button
 			disabled={!revealedAtLeastOnce}
 			style={{ ...gradeButton, backgroundColor: bD.bgColor }}
-			onClick={() => callUpdateCardAndPickNext(bD.updateCardChoice)}
-		>
+			onClick={() => callUpdateCardAndPickNext(bD.updateCardChoice)}>
 			{bD.updateCardChoice}
 		</button>
 	)

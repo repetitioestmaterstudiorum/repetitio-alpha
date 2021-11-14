@@ -4,7 +4,7 @@ import { useLocation, Link } from 'react-router-dom'
 
 import { C } from '/imports/startup/client/clientConstants.js'
 
-// ------------
+// ---
 
 export const Footer = () => {
 	const handleLogout = e => {

@@ -5,7 +5,7 @@ const debug = Debug('REP:serverConstants.js')
 import { C as globalC } from '/imports/startup/globalConstants.js'
 import { sampleData } from '/imports/api/server/sampleData.js'
 
-// ------------
+// ---
 
 export const C = cloneDeep(globalC)
 

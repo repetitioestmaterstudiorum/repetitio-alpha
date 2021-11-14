@@ -13,7 +13,7 @@ import '/imports/api/server/devMethods.js'
 import '/imports/api/methods/deckMethods.js'
 import '/imports/api/methods/cardMethods.js'
 
-// ------------
+// ---
 
 Meteor.startup(() => {
 	// --- insert sample data (user, decks)

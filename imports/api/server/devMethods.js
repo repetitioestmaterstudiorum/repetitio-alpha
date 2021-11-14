@@ -4,7 +4,7 @@ import { DeckCollection } from '/imports/api/collections/deckCollection.js'
 import { CardCollection } from '/imports/api/collections/cardCollection.js'
 import { sampleData, insertSampleDecks } from '/imports/api/server/sampleData.js'
 
-// ------------
+// ---
 
 Meteor.methods({
 	resetDb() {

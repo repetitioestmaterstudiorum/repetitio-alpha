@@ -9,7 +9,7 @@ import { C } from '/imports/startup/client/clientConstants.js'
 import { Loader } from '/imports/ui/components/Loader.jsx'
 import { FindCard } from '/imports/ui/components/FindCard.jsx'
 
-// ------------
+// ---
 
 export const EditDeck = ({ match }) => {
 	const {
@@ -60,8 +60,7 @@ export const EditDeck = ({ match }) => {
 				flexWrap: 'wrap',
 				flexDirection: 'column',
 				textAlign: 'center',
-			}}
-		>
+			}}>
 			<div>
 				<h2>Deck: {currentDeck?.title}</h2>
 				<p>Total cards in deck: {cardsInCurrentDeckCount}</p>
@@ -82,12 +81,10 @@ export const EditDeck = ({ match }) => {
 						alignItems: 'center',
 						flexWrap: 'wrap',
 						flexDirection: 'row',
-					}}
-				>
+					}}>
 					<button
 						style={C.styles.regularButton}
-						onClick={() => Meteor.call('invertShowBackSideFirst', currentDeck)}
-					>
+						onClick={() => Meteor.call('invertShowBackSideFirst', currentDeck)}>
 						{/* sync arrow icon*/}
 						&#128260; Back side first{' '}
 						<input

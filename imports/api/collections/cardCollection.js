@@ -3,7 +3,7 @@ import { Mongo } from 'meteor/mongo'
 
 import { C } from '/imports/startup/globalConstants'
 
-// ------------
+// ---
 
 export const CardCollection = new Mongo.Collection('cards')
 

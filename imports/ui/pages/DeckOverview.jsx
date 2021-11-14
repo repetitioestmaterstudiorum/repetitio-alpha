@@ -6,7 +6,7 @@ import { AddDeckForm } from '/imports/ui/components/AddDeckForm.jsx'
 import { C } from '/imports/startup/client/clientConstants.js'
 import { Loader } from '/imports/ui/components/Loader.jsx'
 
-// ------------
+// ---
 
 export const DeckOverview = () => {
 	const { isLoading, decks, decksCount } = useContext(Context)
@@ -28,8 +28,7 @@ export const DeckOverview = () => {
 				style={{
 					display: 'flex',
 					justifyContent: 'center',
-				}}
-			>
+				}}>
 				<details style={{ margin: '0.5rem 0' }}>
 					<summary>Add a new Deck</summary>
 					<AddDeckForm />

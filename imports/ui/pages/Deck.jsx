@@ -5,7 +5,7 @@ import { C } from '/imports/startup/client/clientConstants.js'
 import { Card } from '/imports/ui/components/Card.jsx'
 import { Loader } from '/imports/ui/components/Loader.jsx'
 
-// ------------
+// ---
 
 export const Deck = ({ match }) => {
 	const {
@@ -37,8 +37,7 @@ export const Deck = ({ match }) => {
 						justifyContent: 'center',
 						alignItems: 'center',
 						height: '90%',
-					}}
-				>
+					}}>
 					<p>&#128079; &#127881; All done for the moment!</p>
 					<p>Go get some &#127867;</p>
 				</div>

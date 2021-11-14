@@ -14,7 +14,7 @@ import { Header } from '/imports/ui/components/Header.jsx'
 import { DevModeDataReset } from '/imports/ui/components/DevModeDataReset.jsx'
 import { Footer } from '/imports/ui/components/Footer.jsx'
 
-// ------------
+// ---
 
 export const Routes = () => {
 	const isLoggedIn = useTracker(() => !!Meteor.userId())

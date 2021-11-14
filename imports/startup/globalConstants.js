@@ -1,7 +1,7 @@
 import Debug from 'debug'
 const debug = Debug('REP:globalConstants.js')
 
-// ------------
+// ---
 
 export const C = {}
 

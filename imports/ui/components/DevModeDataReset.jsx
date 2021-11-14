@@ -2,7 +2,7 @@ import React from 'react'
 
 import { C } from '/imports/startup/client/clientConstants.js'
 
-// ------------
+// ---
 
 export const DevModeDataReset = () => {
 	return Meteor.isDevelopment ? (
@@ -12,8 +12,7 @@ export const DevModeDataReset = () => {
 				onClick={() => {
 					Meteor.call('resetDb')
 					window.location = '/'
-				}}
-			>
+				}}>
 				{/* sirene icon */}
 				&#128680; DB reset & reload home
 			</button>

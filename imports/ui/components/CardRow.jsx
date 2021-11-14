@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import { C } from '/imports/startup/client/clientConstants.js'
 
-// ------------
+// ---
 
 export const CardRow = ({ card }) => {
 	return (
@@ -15,8 +15,7 @@ export const CardRow = ({ card }) => {
 					alignItems: 'center',
 					marginRight: '1rem',
 					justifyContent: 'center',
-				}}
-			>
+				}}>
 				<span>
 					<strong>front</strong>: {card.front} <br />
 					<strong>back</strong>: {card.back}

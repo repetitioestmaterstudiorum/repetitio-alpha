@@ -4,7 +4,7 @@ import { DeckCollection } from '/imports/api/collections/deckCollection.js'
 import { CardCollection } from '/imports/api/collections/cardCollection.js'
 import { C } from '/imports/startup/server/serverConstants.js'
 
-// ------------
+// ---
 
 export const sampleData = {}
 

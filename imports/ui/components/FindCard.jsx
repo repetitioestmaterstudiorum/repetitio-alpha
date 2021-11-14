@@ -5,7 +5,7 @@ import { Context } from '/imports/ui/DataState.jsx'
 import { C } from '/imports/startup/client/clientConstants.js'
 import { CardRow } from '/imports/ui/components/CardRow.jsx'
 
-// ------------
+// ---
 
 export const FindCard = () => {
 	const [front, setFront] = useState('')
@@ -44,8 +44,7 @@ export const FindCard = () => {
 						display: 'flex',
 						flexWrap: 'wrap',
 						flexDirection: 'column',
-					}}
-				>
+					}}>
 					<input
 						ref={frontInput}
 						type='front'

@@ -4,7 +4,7 @@ import { check } from 'meteor/check'
 import { DeckCollection } from '/imports/api/collections/deckCollection.js'
 import { deleteDecksCards } from '/imports/api/methods/cardMethods.js'
 
-// ------------
+// ---
 
 Meteor.methods({
 	addDeck(title) {
