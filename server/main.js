@@ -1,12 +1,12 @@
 import { Meteor } from 'meteor/meteor'
 import { Accounts } from 'meteor/accounts-base'
 
-import { DeckCollection } from '/imports/api/collections/deckCollection.js'
+import { DeckCollection } from '../imports/api/collections/deckCollection.js'
 import { C } from '/imports/startup/server/serverConstants.js'
 import { sampleData, insertSampleDecks } from '/imports/api/server/sampleData.js'
 
 // publications
-import '/imports/api/server/meteorPublications.js'
+import '../imports/api/server/dataPublications.js'
 
 // method files
 import '/imports/api/server/devMethods.js'
@@ -16,7 +16,7 @@ import '/imports/api/methods/cardMethods.js'
 // ---
 
 Meteor.startup(() => {
-	// --- insert sample data (user, decks)
+	// insert sample data (user, decks and cards)
 	if (!Accounts.findUserByUsername(C.meteor.accounts.admin)) {
 		Accounts.createUser({
 			username: C.meteor.accounts.admin,

@@ -1,7 +1,9 @@
 import { Meteor } from 'meteor/meteor'
 import { check } from 'meteor/check'
+import memoize from 'lodash.memoize'
 
 import { CardCollection } from '/imports/api/collections/cardCollection.js'
+import { throwIfNotLoggedIn } from '/imports/api/helpers/methodHelpers.js'
 
 // ---
 
@@ -11,7 +13,7 @@ Meteor.methods({
 		check(back, String)
 		check(deckId, String)
 
-		if (!this.userId) throw new Meteor.Error('Not authorized.')
+		throwIfNotLoggedIn(this.userId)
 
 		CardCollection.insert({
 			deckId,
@@ -24,42 +26,18 @@ Meteor.methods({
 		check(cardId, String)
 		check(recalculatedCard, Object)
 
-		if (!this.userId) throw new Meteor.Error('Not authorized.')
-
-		// todo: make function to call in all methods
-		const isUsersCard = !!CardCollection.findOne(
-			{ _id: cardId, userId: this.userId },
-			{ fields: { _id: 1 } }
-		)
-		if (!isUsersCard) throw new Meteor.Error('Access denied.')
+		throwIfNotLoggedIn(this.userId)
+		throwIfNotUsersCardMemoized(this.userId, cardId)
 
 		CardCollection.update({ _id: cardId }, { $set: { ...recalculatedCard } })
-	},
-	deleteCard(cardId) {
-		check(cardId, String)
-
-		if (!this.userId) throw new Meteor.Error('Not authorized.')
-
-		const isUsersCard = !!CardCollection.findOne(
-			{ _id: cardId, userId: this.userId },
-			{ fields: { _id: 1 } }
-		)
-		if (!isUsersCard) throw new Meteor.Error('Access denied.')
-
-		CardCollection.update({ _id: cardId }, { $set: { deleted: true } })
 	},
 	updateCard(front, back, cardId) {
 		check(front, String)
 		check(back, String)
 		check(cardId, String)
 
-		if (!this.userId) throw new Meteor.Error('Not authorized.')
-
-		const isUsersCard = !!CardCollection.findOne(
-			{ _id: cardId, userId: this.userId },
-			{ fields: { _id: 1 } }
-		)
-		if (!isUsersCard) throw new Meteor.Error('Access denied.')
+		throwIfNotLoggedIn(this.userId)
+		throwIfNotUsersCardMemoized(this.userId, cardId)
 
 		CardCollection.update(
 			{ _id: cardId },
@@ -68,10 +46,17 @@ Meteor.methods({
 			}
 		)
 	},
+	deleteCard(cardId) {
+		check(cardId, String)
+
+		throwIfNotLoggedIn(this.userId)
+		throwIfNotUsersCardMemoized(this.userId, cardId)
+
+		CardCollection.update({ _id: cardId }, { $set: { deleted: true } })
+	},
 })
 
-export function deleteDecksCards(deckId) {
-	if (!deckId) throw new Meteor.Error('No deckId to delete cards of.')
-
-	CardCollection.update({ deckId }, { $set: { deleted: true } }, { multi: true })
-}
+const throwIfNotUsersCardMemoized = memoize((userId, cardId) => {
+	const isUsersCard = !!CardCollection.findOne({ _id: cardId, userId }, { fields: { _id: 1 } })
+	if (!isUsersCard) throw new Meteor.Error('Access denied.')
+})

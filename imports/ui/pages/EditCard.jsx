@@ -25,22 +25,25 @@ export const EditCard = ({ match }) => {
 	const handleDeleteCardClick = () => {
 		Swal.fire({
 			title: `Want to delete this card?`,
-			html: `front: ${card.front} <br /><br />
-			back: ${card.back}`,
+			html: `front: ${cardInEditMode.front} <br /><br />
+			back: ${cardInEditMode.back}`,
 			icon: 'warning',
 			confirmButtonText: 'Yeees',
 			cancelButtonText: 'No!',
 			showCancelButton: true,
 		}).then(result => {
-			const cardName = `front: ${card.front}, back: ${card.back}`
+			const cardName = `front: ${cardInEditMode.front}, back: ${cardInEditMode.back}`
 			if (result.isConfirmed) {
-				Meteor.call('deleteCard', card._id, err => {
+				Meteor.call('deleteCard', cardInEditMode._id, err => {
 					if (err) {
-						console.error(`Error deleting card ${card._id}`, err)
+						console.error(`Error deleting card ${cardInEditMode._id}`, err)
 						Swal.fire('Error!', `The card "${cardName}" could not be deleted`, 'error')
 					} else {
-						searchAgain()
-						Swal.fire('Done!', `The card "${cardName}" has been deleted`, 'success')
+						Swal.fire(
+							'Done!',
+							`The card "${cardName}" has been deleted`,
+							'success'
+						).then(_ => history.goBack())
 					}
 				})
 			}

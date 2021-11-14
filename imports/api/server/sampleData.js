@@ -8,7 +8,7 @@ import { C } from '/imports/startup/server/serverConstants.js'
 
 export const sampleData = {}
 
-// --- default admin username and password
+// default admin username and password
 sampleData.meteor = {
 	accounts: {
 		defaultAdmin: 'admin',
@@ -16,7 +16,7 @@ sampleData.meteor = {
 	},
 }
 
-// --- decks with cards
+// decks with cards
 sampleData.decks = [
 	{
 		title: 'Test deck',
@@ -35,7 +35,6 @@ sampleData.decks = [
 	{ title: 'New skill', cards: [{ front: 'Front', back: 'Back' }] },
 ]
 
-// --- functions
 export function insertSampleDecks(decks) {
 	const user = Accounts.findUserByUsername(C.meteor.accounts.admin)
 

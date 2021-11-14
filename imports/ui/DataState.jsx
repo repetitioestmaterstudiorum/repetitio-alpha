@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import { DeckCollection } from '/imports/api/collections/deckCollection.js'
 import { CardCollection } from '/imports/api/collections/cardCollection.js'
 
-// ------------
+// ---
 
 export const Context = createContext()
 
@@ -154,8 +154,7 @@ export const DataState = ({ children }) => {
 				updateCardAndPickNext,
 				skipCard,
 				findCardsInCurrentDeck,
-			}}
-		>
+			}}>
 			{children}
 		</Context.Provider>
 	)
