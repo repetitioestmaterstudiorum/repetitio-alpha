@@ -10,8 +10,7 @@ import { sampleData } from '/imports/api/server/sampleData.js'
 export const C = cloneDeep(globalC)
 
 const { DEFAULT_ADMIN: defaultAdmin, DEFAULT_PASS: defaultPass } = process.env
-const defaultAdminAndPass = defaultAdmin && defaultPass
-if (!defaultAdminAndPass) {
+if (!defaultAdmin || !defaultPass) {
 	debug(
 		`Missing env variables for default admin and password (-> sampleData used). defaultAdmin: ${defaultAdmin}, defaultPass: ${defaultPass}`
 	)
@@ -19,8 +18,8 @@ if (!defaultAdminAndPass) {
 
 C.meteor = {
 	accounts: {
-		admin: defaultAdminAndPass ? defaultAdmin : sampleData.meteor.accounts.defaultAdmin,
-		pass: defaultAdminAndPass ? defaultPass : sampleData.meteor.accounts.defaultPass,
+		admin: defaultAdmin ? defaultAdmin : sampleData.meteor.accounts.defaultAdmin,
+		pass: defaultPass ? defaultPass : sampleData.meteor.accounts.defaultPass,
 	},
 }
 
