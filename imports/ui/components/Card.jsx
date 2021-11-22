@@ -56,7 +56,7 @@ export const Card = () => {
 		setShowBackSide(!showBackSide)
 	}
 
-	const callUpdateCardAndPickNext = choice => updateCardAndPickNext(cardQueueOfDeck[0], choice)
+	const callUpdateCardAndPickNext = choice => updateCardAndPickNext(cardQueueOfDeck[0]._id, choice)
 
 	const buttonData = [
 		{ updateCardChoice: 0, bgColor: '#3a0101' },

@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor'
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import Swal from 'sweetalert2/src/sweetalert2.js'
 import { useHistory } from 'react-router-dom'
 
@@ -10,7 +10,8 @@ import { Context } from '/imports/ui/DataState.jsx'
 // ---
 
 export const EditCard = ({ match }) => {
-	const { cardInEditMode, setCardIdInEditMode } = useContext(Context)
+	const { getCardById } = useContext(Context)
+	const [card, setCard] = useState({})
 
 	const {
 		params: { cardId },
@@ -19,24 +20,24 @@ export const EditCard = ({ match }) => {
 	const history = useHistory()
 
 	useEffect(() => {
-		setCardIdInEditMode(cardId)
+		setCard(getCardById(cardId))
 	}, [cardId])
 
 	const handleDeleteCardClick = () => {
 		Swal.fire({
 			title: `Want to delete this card?`,
-			html: `front: ${cardInEditMode.front} <br /><br />
-			back: ${cardInEditMode.back}`,
+			html: `front: ${card.front} <br /><br />
+			back: ${card.back}`,
 			icon: 'warning',
 			confirmButtonText: 'Yeees',
 			cancelButtonText: 'No!',
 			showCancelButton: true,
 		}).then(result => {
-			const cardName = `front: ${cardInEditMode.front}, back: ${cardInEditMode.back}`
+			const cardName = `front: ${card.front}, back: ${card.back}`
 			if (result.isConfirmed) {
-				Meteor.call('deleteCard', cardInEditMode._id, err => {
+				Meteor.call('deleteCard', card._id, err => {
 					if (err) {
-						console.error(`Error deleting card ${cardInEditMode._id}`, err)
+						console.error(`Error deleting card ${card._id}`, err)
 						Swal.fire('Error!', `The card "${cardName}" could not be deleted`, 'error')
 					} else {
 						Swal.fire(
@@ -50,7 +51,7 @@ export const EditCard = ({ match }) => {
 		})
 	}
 
-	return cardInEditMode?._id ? (
+	return card?._id ? (
 		<div
 			style={{
 				display: 'flex',
@@ -65,33 +66,21 @@ export const EditCard = ({ match }) => {
 				<form style={C.styles.uiForm}>
 					<textarea
 						type='front'
-						defaultValue={cardInEditMode.front}
+						defaultValue={card.front}
 						onChange={e =>
-							Meteor.call(
-								'updateCard',
-								e.target.value,
-								cardInEditMode.back,
-								cardId,
-								err => {
-									if (err) console.error('err :>> ', err)
-								}
-							)
+							Meteor.call('updateCard', e.target.value, card.back, cardId, err => {
+								if (err) console.error('err :>> ', err)
+							})
 						}
 						style={{ width: '95vw', maxWidth: '400px' }}
 					/>
 					<textarea
 						type='back'
-						defaultValue={cardInEditMode.back}
+						defaultValue={card.back}
 						onChange={e =>
-							Meteor.call(
-								'updateCard',
-								cardInEditMode.front,
-								e.target.value,
-								cardId,
-								err => {
-									if (err) console.error('err :>> ', err)
-								}
-							)
+							Meteor.call('updateCard', card.front, e.target.value, cardId, err => {
+								if (err) console.error('err :>> ', err)
+							})
 						}
 					/>
 				</form>

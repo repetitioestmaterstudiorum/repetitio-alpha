@@ -11,13 +11,12 @@ import { CardCollection } from '/imports/api/collections/cardCollection.js'
 
 export const Context = createContext()
 
-const queueLimit = 20
-const cardQueue = {} // todo: use indexDb for refresh safety and generally it's cool?
+const queueLimit = 30
+const cardQueue = {}
 
 export const DataState = ({ children }) => {
 	const [, forceUpdate] = useReducer(x => x + 1, 0)
 	const [currentDeckId, setCurrentDeckId] = useState(null)
-	const [cardIdInEditMode, setCardIdInEditMode] = useState(null)
 
 	const {
 		isLoading,
@@ -28,7 +27,6 @@ export const DataState = ({ children }) => {
 		cardsInCurrentDeckCount,
 		dueCardsInCurrentDeckLimited,
 		dueCardsInCurrentDeckCount,
-		cardInEditMode,
 	} = useTracker(() => {
 		const decksSubHandler = Meteor.subscribe('decks')
 		const cardsSubHandler = Meteor.subscribe('cards')
@@ -43,7 +41,6 @@ export const DataState = ({ children }) => {
 				cardsInCurrentDeckCount: 0,
 				dueCardsInCurrentDeckLimited: [],
 				dueCardsInCurrentDeckCount: 0,
-				cardInEditMode: '',
 			}
 		}
 
@@ -75,8 +72,6 @@ export const DataState = ({ children }) => {
 			dueDate: { $lte: new Date() },
 		}).count()
 
-		const cardInEditMode = CardCollection.findOne(cardIdInEditMode)
-
 		return {
 			isLoading: false,
 			decks,
@@ -86,7 +81,6 @@ export const DataState = ({ children }) => {
 			cardsInCurrentDeckCount,
 			dueCardsInCurrentDeckLimited,
 			dueCardsInCurrentDeckCount,
-			cardInEditMode,
 		}
 	})
 
@@ -106,13 +100,16 @@ export const DataState = ({ children }) => {
 		}
 	}
 
+	const getCardById = cardId => CardCollection.findOne(cardId)
+
 	const skipCard = () => {
 		cardQueue[currentDeckId].shift()
 		forceUpdate()
 	}
 
-	const updateCardAndPickNext = (card, grade) => {
+	const updateCardAndPickNext = (cardId, grade) => {
 		cardQueue[currentDeckId].shift()
+		const card = CardCollection.findOne(cardId)
 		const recalculatedCard = recalculateCard(card, grade)
 		Meteor.call('updateRecalculatedCard', card._id, recalculatedCard)
 	}
@@ -147,13 +144,13 @@ export const DataState = ({ children }) => {
 				dueCardsInCurrentDeckCount,
 				// js array (queue)
 				cardQueue,
-				// react states and functions
+				// react state
 				setCurrentDeckId,
-				setCardIdInEditMode,
-				cardInEditMode,
+				// functions
 				updateCardAndPickNext,
 				skipCard,
 				findCardsInCurrentDeck,
+				getCardById,
 			}}>
 			{children}
 		</Context.Provider>
