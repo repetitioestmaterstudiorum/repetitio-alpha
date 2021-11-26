@@ -12,8 +12,9 @@ Meteor.methods({
 		if (!Meteor.isDevelopment) throw new Meteor.Error('Not in development mode.')
 		throwIfNotLoggedIn(this.userId)
 
-		DeckCollection.remove({})
-		CardCollection.remove({})
+		const sampleDeckIds = DeckCollection.find({ isSampleDeck: true }).map(d => d._id)
+		DeckCollection.remove({ _id: { $in: sampleDeckIds } })
+		CardCollection.remove({ deckId: { $in: sampleDeckIds } })
 
 		insertSampleDecks(sampleData.decks)
 	},
