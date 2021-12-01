@@ -23,15 +23,15 @@ C.meteor = {
 	},
 }
 
-const { SMTP_HOST: smtpHost, SMTP_USER: smtpUser, SMTP_PASSWORD: smtpPassword } = process.env
-if (!smtpHost || !smtpUser || !smtpPassword) {
-	debug(
-		`Missing SMTP env variables (important for error reporting). smtpHost: ${smtpHost}, smtpUser: ${smtpUser}, smtpPassword: ${smtpPassword}`
-	)
-} else {
-	C.email = {
-		smtpHost,
-		smtpUser,
-		smtpPassword,
-	}
-}
+// const { SMTP_HOST: smtpHost, SMTP_USER: smtpUser, SMTP_PASSWORD: smtpPassword } = process.env
+// if (!smtpHost || !smtpUser || !smtpPassword) {
+// 	debug(
+// 		`Missing SMTP env variables (important for error reporting). smtpHost: ${!!smtpHost}, smtpUser: ${!!smtpUser}, smtpPassword: ${!!smtpPassword}`
+// 	)
+// } else {
+// 	C.email = {
+// 		smtpHost,
+// 		smtpUser,
+// 		smtpPassword,
+// 	}
+// }
