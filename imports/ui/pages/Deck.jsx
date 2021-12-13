@@ -17,7 +17,7 @@ export const Deck = ({ match }) => {
 
 	useEffect(() => setCurrentDeckId(deckId), [deckId])
 
-	const reviewDue = cardQueue[deckId] && !!cardQueue[deckId][0]?._id
+	const reviewDue = !!cardQueue[0]?._id
 
 	return currentDeck?._id ? (
 		<div style={{ height: reviewDue ? '100%' : '90%' }}>

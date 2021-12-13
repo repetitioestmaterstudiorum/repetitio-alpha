@@ -3,6 +3,20 @@ const debug = Debug('REP:globalConstants.js')
 
 // ---
 
+// complain if necessary env vars (front or backend) aren't defined
+const requiredVariables = [
+	// 'process.env.SMTP_HOST',
+	// 'process.env.SMTP_USER',
+	// 'process.env.SMTP_PASSWORD',
+]
+const undefinedVariables = requiredVariables.filter(x => !eval(x))
+if (undefinedVariables.length) {
+	const errorMessage = `Some essential environmental variables are undefined!
+		${JSON.stringify(undefinedVariables)}
+	`
+	throw new Error(errorMessage)
+}
+
 export const C = {}
 
 C.sm2 = {
@@ -11,8 +25,8 @@ C.sm2 = {
 	initEfactor: 2.5,
 }
 
-const { TIME_ZONE: timeZone } = process.env
-if (!timeZone) {
-	debug(`Missing env variables for time zone. Using Europe/Zurich. timeZone: ${timeZone}`)
+C.globalSettings = {
+	queueLimit: 30,
 }
-C.timeZone = timeZone || 'Europe/Zurich'
+
+C.timeZone = process.env.TIME_ZONE || 'Europe/Zurich'

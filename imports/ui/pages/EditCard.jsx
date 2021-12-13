@@ -68,7 +68,7 @@ export const EditCard = ({ match }) => {
 						type='front'
 						defaultValue={card.front}
 						onChange={e =>
-							Meteor.call('updateCard', e.target.value, card.back, cardId, err => {
+							Meteor.call('updateCardFront', cardId, e.target.value, err => {
 								if (err) console.error('err :>> ', err)
 							})
 						}
@@ -78,7 +78,7 @@ export const EditCard = ({ match }) => {
 						type='back'
 						defaultValue={card.back}
 						onChange={e =>
-							Meteor.call('updateCard', card.front, e.target.value, cardId, err => {
+							Meteor.call('updateCardBack', cardId, e.target.value, err => {
 								if (err) console.error('err :>> ', err)
 							})
 						}

@@ -14,12 +14,18 @@ export const Card = () => {
 	const [showBackSide, setShowBackSide] = useState(null)
 	const [revealedAtLeastOnce, setRevealedAtLeastOnce] = useState(null)
 
-	const cardQueueOfDeck = cardQueue[currentDeck._id]
+	const putFreshlySkippedCardsLast = queue => {
+		const wasSkipped = card => card.skippedAt
+		const notSkippedCards = queue.filter(c => !wasSkipped(c))
+		const skippedCards = queue.filter(wasSkipped).sort((a, b) => a.skippedAt - b.skippedAt)
+		return [].concat(notSkippedCards, skippedCards)
+	}
+	const orderedCardQueue = putFreshlySkippedCardsLast(cardQueue)
 
 	useEffect(() => {
 		setShowBackSide(currentDeck?.showBackSideFirst)
 		setRevealedAtLeastOnce(false)
-	}, [cardQueueOfDeck[0]?._id, updateCardAndPickNext])
+	}, [orderedCardQueue[0]?._id, updateCardAndPickNext])
 
 	useEffect(() => {
 		document.addEventListener('keydown', keyDownHandler, false)
@@ -56,7 +62,8 @@ export const Card = () => {
 		setShowBackSide(!showBackSide)
 	}
 
-	const callUpdateCardAndPickNext = choice => updateCardAndPickNext(cardQueueOfDeck[0]._id, choice)
+	const callUpdateCardAndPickNext = choice =>
+		updateCardAndPickNext(orderedCardQueue[0]._id, choice)
 
 	const buttonData = [
 		{ updateCardChoice: 0, bgColor: '#3a0101' },
@@ -76,13 +83,13 @@ export const Card = () => {
 		</button>
 	)
 
-	return isLoading && cardQueueOfDeck[0]?._id ? (
+	return isLoading && orderedCardQueue[0]?._id ? (
 		<Loader />
 	) : (
 		<div style={cardDiv}>
 			<div style={cardContentDiv} onClick={() => flipCard()}>
 				<p style={{ fontSize: '2rem', whiteSpace: 'pre-wrap' }} unselectable='on'>
-					{showBackSide ? cardQueueOfDeck[0].back : cardQueueOfDeck[0].front}
+					{showBackSide ? orderedCardQueue[0].back : orderedCardQueue[0].front}
 				</p>
 			</div>
 			<div style={gradeButtonsDiv}>
@@ -97,10 +104,12 @@ export const Card = () => {
 					<ChoiceButton key={i} bD={bD} />
 				))}
 				<div style={{ bottom: '60px', position: 'absolute' }}>
-					<Link to={`/edit-card/${cardQueueOfDeck[0]._id}`}>
+					<Link to={`/edit-card/${orderedCardQueue[0]._id}`}>
 						<button style={C.styles.roundButton}>&#9997;</button>
 					</Link>
-					<button onClick={() => skipCard()} style={C.styles.roundButton}>
+					<button
+						onClick={() => skipCard(orderedCardQueue[0]._id)}
+						style={C.styles.roundButton}>
 						&#9889;
 					</button>
 				</div>

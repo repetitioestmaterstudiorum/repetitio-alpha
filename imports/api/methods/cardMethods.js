@@ -22,19 +22,18 @@ Meteor.methods({
 			userId: this.userId,
 		})
 	},
-	updateRecalculatedCard(cardId, recalculatedCard) {
+	updateCard(cardId, card) {
 		check(cardId, String)
-		check(recalculatedCard, Object)
+		check(card, Object)
 
 		throwIfNotLoggedIn(this.userId)
 		throwIfNotUsersCardMemoized(this.userId, cardId)
 
-		CardCollection.update({ _id: cardId }, { $set: { ...recalculatedCard } })
+		CardCollection.update({ _id: cardId }, { $set: { ...card } })
 	},
-	updateCard(front, back, cardId) {
-		check(front, String)
-		check(back, String)
+	updateCardFront(cardId, front) {
 		check(cardId, String)
+		check(front, String)
 
 		throwIfNotLoggedIn(this.userId)
 		throwIfNotUsersCardMemoized(this.userId, cardId)
@@ -42,7 +41,21 @@ Meteor.methods({
 		CardCollection.update(
 			{ _id: cardId },
 			{
-				$set: { front: front.trim(), back: back.trim() },
+				$set: { front: front.trim() },
+			}
+		)
+	},
+	updateCardBack(cardId, back) {
+		check(cardId, String)
+		check(back, String)
+
+		throwIfNotLoggedIn(this.userId)
+		throwIfNotUsersCardMemoized(this.userId, cardId)
+
+		CardCollection.update(
+			{ _id: cardId },
+			{
+				$set: { back: back.trim() },
 			}
 		)
 	},

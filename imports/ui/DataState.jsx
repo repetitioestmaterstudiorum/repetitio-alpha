@@ -1,46 +1,38 @@
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
-import React, { useState, createContext, useReducer } from 'react'
+import React, { useState, createContext } from 'react'
 import { supermemo } from 'supermemo'
 import dayjs from 'dayjs'
 
 import { DeckCollection } from '/imports/api/collections/deckCollection.js'
 import { CardCollection } from '/imports/api/collections/cardCollection.js'
+import { C } from '/imports/startup/client/clientConstants.js'
 
 // ---
 
 export const Context = createContext()
 
-const queueLimit = 30
-const cardQueue = {}
-
 export const DataState = ({ children }) => {
-	const [, forceUpdate] = useReducer(x => x + 1, 0)
 	const [currentDeckId, setCurrentDeckId] = useState(null)
 
 	const {
-		isLoading,
 		decks,
 		decksCount,
 		currentDeck,
-		cardsInCurrentDeck,
-		cardsInCurrentDeckCount,
-		dueCardsInCurrentDeckLimited,
+		cardQueue,
 		dueCardsInCurrentDeckCount,
+		cardsInCurrentDeckCount,
 	} = useTracker(() => {
 		const decksSubHandler = Meteor.subscribe('decks')
-		const cardsSubHandler = Meteor.subscribe('cards')
-
-		if (!decksSubHandler.ready() || !cardsSubHandler.ready()) {
+		const cardsQueueSubHandler = Meteor.subscribe('cardsQueue')
+		if (!decksSubHandler.ready() || !cardsQueueSubHandler.ready) {
 			return {
-				isLoading: true,
 				decks: [],
 				decksCount: 0,
 				currentDeck: {},
-				cardsInCurrentDeck: [],
-				cardsInCurrentDeckCount: 0,
-				dueCardsInCurrentDeckLimited: [],
+				cardQueue: [],
 				dueCardsInCurrentDeckCount: 0,
+				cardsInCurrentDeckCount: 0,
 			}
 		}
 
@@ -49,22 +41,9 @@ export const DataState = ({ children }) => {
 
 		const currentDeck = DeckCollection.findOne(currentDeckId)
 
-		const cardsInCurrentDeckCursor = CardCollection.find({
-			deckId: currentDeck?._id,
-		})
-		const cardsInCurrentDeck = cardsInCurrentDeckCursor.fetch()
-		const cardsInCurrentDeckCount = cardsInCurrentDeckCursor.count()
-
-		const dueCardsInCurrentDeckLimited = CardCollection.find(
-			{
-				deckId: currentDeck?._id,
-				dueDate: { $lte: new Date() },
-			},
-			{
-				// hardest, then oldest dueDate
-				sort: { efactor: 1, dueDate: 1 },
-				limit: queueLimit,
-			}
+		const cardQueue = CardCollection.find(
+			{ deckId: currentDeck?._id, dueDate: { $lte: new Date() } },
+			{ sort: { efactor: 1, dueDate: 1 }, limit: C.globalSettings.queueLimit }
 		).fetch()
 
 		const dueCardsInCurrentDeckCount = CardCollection.find({
@@ -72,46 +51,49 @@ export const DataState = ({ children }) => {
 			dueDate: { $lte: new Date() },
 		}).count()
 
+		const cardsInCurrentDeckCount = CardCollection.find({
+			deckId: currentDeck?._id,
+		}).count()
+
 		return {
-			isLoading: false,
 			decks,
 			decksCount,
 			currentDeck,
-			cardsInCurrentDeck,
-			cardsInCurrentDeckCount,
-			dueCardsInCurrentDeckLimited,
+			cardQueue,
 			dueCardsInCurrentDeckCount,
+			cardsInCurrentDeckCount,
 		}
 	})
 
-	// queue refilling
-	if (currentDeckId && dueCardsInCurrentDeckLimited.length > 0) {
-		if (!cardQueue[currentDeckId]) cardQueue[currentDeckId] = []
-		const currentQueue = cardQueue[currentDeckId]
-		const cardQueueIds = currentQueue.map(c => c._id)
-		for (
-			let i = 0;
-			currentQueue.length < Math.min(queueLimit, dueCardsInCurrentDeckLimited.length); //  there can be less cards due to review than the queue's limit
-			i++
-		) {
-			if (!cardQueueIds.includes(dueCardsInCurrentDeckLimited[i]._id)) {
-				currentQueue.push(dueCardsInCurrentDeckLimited[i])
+	const { isLoading, cardsInCurrentDeck } = useTracker(() => {
+		const cardsSubHandler = Meteor.subscribe('cards')
+		if (!cardsSubHandler.ready()) {
+			return {
+				isLoading: true,
+				cardsInCurrentDeck: [],
 			}
 		}
-	}
+
+		const cardsInCurrentDeck = CardCollection.find({ deckId: currentDeck?._id }).fetch()
+
+		return {
+			isLoading: false,
+			cardsInCurrentDeck,
+		}
+	})
 
 	const getCardById = cardId => CardCollection.findOne(cardId)
 
-	const skipCard = () => {
-		cardQueue[currentDeckId].shift()
-		forceUpdate()
+	const skipCard = cardId => {
+		const card = CardCollection.findOne(cardId)
+		const skippedCard = { ...card, skippedAt: new Date() }
+		Meteor.call('updateCard', card._id, skippedCard)
 	}
 
 	const updateCardAndPickNext = (cardId, grade) => {
-		cardQueue[currentDeckId].shift()
 		const card = CardCollection.findOne(cardId)
-		const recalculatedCard = recalculateCard(card, grade)
-		Meteor.call('updateRecalculatedCard', card._id, recalculatedCard)
+		const recalculatedCard = { ...recalculateCard(card, grade), createdAt: null }
+		Meteor.call('updateCard', card._id, recalculatedCard)
 	}
 
 	const findCardsInCurrentDeck = ({ frontKeywords, backKeywords }) => {
@@ -135,7 +117,7 @@ export const DataState = ({ children }) => {
 		<Context.Provider
 			value={{
 				// meteor reactive data
-				isLoading,
+				isLoading: isLoading ?? true,
 				decks,
 				decksCount,
 				currentDeck,

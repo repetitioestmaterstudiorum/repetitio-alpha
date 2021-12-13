@@ -16,8 +16,13 @@ export const EditDeck = ({ match }) => {
 		params: { deckId },
 	} = match
 
-	const { setCurrentDeckId, currentDeck, dueCardsInCurrentDeckCount, cardsInCurrentDeckCount } =
-		useContext(Context)
+	const {
+		isLoading,
+		setCurrentDeckId,
+		currentDeck,
+		dueCardsInCurrentDeckCount,
+		cardsInCurrentDeckCount,
+	} = useContext(Context)
 
 	useEffect(() => setCurrentDeckId(deckId), [deckId])
 
@@ -51,7 +56,7 @@ export const EditDeck = ({ match }) => {
 		})
 	}
 
-	return currentDeck?._id ? (
+	return !isLoading ? (
 		<div
 			style={{
 				display: 'flex',
