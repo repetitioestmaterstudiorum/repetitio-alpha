@@ -16,6 +16,7 @@ export const DataState = ({ children }) => {
 	const [currentDeckId, setCurrentDeckId] = useState(null)
 
 	const {
+		isLoading,
 		decks,
 		decksCount,
 		currentDeck,
@@ -25,8 +26,11 @@ export const DataState = ({ children }) => {
 	} = useTracker(() => {
 		const decksSubHandler = Meteor.subscribe('decks')
 		const cardsQueueSubHandler = Meteor.subscribe('cardsQueue')
-		if (!decksSubHandler.ready() || !cardsQueueSubHandler.ready) {
+		const allCardsSubHandler = Meteor.subscribe('cards')
+
+		if (!decksSubHandler.ready() || !cardsQueueSubHandler.ready || !allCardsSubHandler.ready) {
 			return {
+				isLoading: true,
 				decks: [],
 				decksCount: 0,
 				currentDeck: {},
@@ -56,6 +60,7 @@ export const DataState = ({ children }) => {
 		}).count()
 
 		return {
+			isLoading: false,
 			decks,
 			decksCount,
 			currentDeck,
@@ -65,28 +70,13 @@ export const DataState = ({ children }) => {
 		}
 	})
 
-	const { isLoading, cardsInCurrentDeck } = useTracker(() => {
-		const cardsSubHandler = Meteor.subscribe('cards')
-		if (!cardsSubHandler.ready()) {
-			return {
-				isLoading: true,
-				cardsInCurrentDeck: [],
-			}
-		}
-
-		const cardsInCurrentDeck = CardCollection.find({ deckId: currentDeck?._id }).fetch()
-
-		return {
-			isLoading: false,
-			cardsInCurrentDeck,
-		}
-	})
-
 	const getCardById = cardId => CardCollection.findOne(cardId)
 
 	const skipCard = cardId => {
 		const card = CardCollection.findOne(cardId)
-		const skippedCard = { ...card, skippedAt: new Date() }
+		const lastCard = cardQueue[C.globalSettings.queueLimit - 1]
+		const newDueDate = dayjs(lastCard.dueDate).add(1, 'second').toDate()
+		const skippedCard = { ...card, dueDate: newDueDate }
 		Meteor.call('updateCard', card._id, skippedCard)
 	}
 
@@ -117,11 +107,10 @@ export const DataState = ({ children }) => {
 		<Context.Provider
 			value={{
 				// meteor reactive data
-				isLoading: isLoading ?? true,
+				isLoading,
 				decks,
 				decksCount,
 				currentDeck,
-				cardsInCurrentDeck,
 				cardsInCurrentDeckCount,
 				dueCardsInCurrentDeckCount,
 				// js array (queue)

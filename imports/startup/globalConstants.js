@@ -27,6 +27,7 @@ C.sm2 = {
 
 C.globalSettings = {
 	queueLimit: 30,
+	timeSkippedCardEndOfQueueInMin: 10,
 }
 
 C.timeZone = process.env.TIME_ZONE || 'Europe/Zurich'

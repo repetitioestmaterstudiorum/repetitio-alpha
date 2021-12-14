@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import dayjs from 'dayjs'
 
 import { Context } from '/imports/ui/DataState.jsx'
 import { C } from '/imports/startup/client/clientConstants.js'
@@ -11,21 +12,29 @@ export const Card = () => {
 	const { isLoading, cardQueue, updateCardAndPickNext, currentDeck, skipCard } =
 		useContext(Context)
 
+	const [orderedCardQueue, setOrderedCardQueue] = useState([])
 	const [showBackSide, setShowBackSide] = useState(null)
 	const [revealedAtLeastOnce, setRevealedAtLeastOnce] = useState(null)
-
-	const putFreshlySkippedCardsLast = queue => {
-		const wasSkipped = card => card.skippedAt
-		const notSkippedCards = queue.filter(c => !wasSkipped(c))
-		const skippedCards = queue.filter(wasSkipped).sort((a, b) => a.skippedAt - b.skippedAt)
-		return [].concat(notSkippedCards, skippedCards)
-	}
-	const orderedCardQueue = putFreshlySkippedCardsLast(cardQueue)
 
 	useEffect(() => {
 		setShowBackSide(currentDeck?.showBackSideFirst)
 		setRevealedAtLeastOnce(false)
-	}, [orderedCardQueue[0]?._id, updateCardAndPickNext])
+	}, [updateCardAndPickNext])
+
+	// put freshly updated cards (usually skipped cards) last in the queue
+	useEffect(() => {
+		const isFreshlyUpdated = card =>
+			card.updatedAt >
+			dayjs().subtract(C.globalSettings.timeSkippedCardEndOfQueueInMin, 'minutes').toDate()
+		const notFreshlyUpdatedCards = cardQueue.filter(c => !isFreshlyUpdated(c))
+		const freshlyUpdatedCards = cardQueue
+			.filter(isFreshlyUpdated)
+			.sort((a, b) => a.updatedAt - b.updatedAt)
+		setOrderedCardQueue([].concat(notFreshlyUpdatedCards, freshlyUpdatedCards))
+	}, cardQueue)
+
+	console.log('cardQueue :>> ', cardQueue)
+	console.log('orderedCardQueue :>> ', orderedCardQueue)
 
 	useEffect(() => {
 		document.addEventListener('keydown', keyDownHandler, false)
@@ -65,7 +74,7 @@ export const Card = () => {
 	const callUpdateCardAndPickNext = choice =>
 		updateCardAndPickNext(orderedCardQueue[0]._id, choice)
 
-	const buttonData = [
+	const buttonsData = [
 		{ updateCardChoice: 0, bgColor: '#3a0101' },
 		{ updateCardChoice: 1, bgColor: '#630202' },
 		{ updateCardChoice: 2, bgColor: '#633802' },
@@ -74,16 +83,16 @@ export const Card = () => {
 		{ updateCardChoice: 5, bgColor: '#026916' },
 	]
 
-	const ChoiceButton = ({ bD }) => (
+	const ChoiceButton = ({ buttonData }) => (
 		<button
 			disabled={!revealedAtLeastOnce}
-			style={{ ...gradeButton, backgroundColor: bD.bgColor }}
-			onClick={() => callUpdateCardAndPickNext(bD.updateCardChoice)}>
-			{bD.updateCardChoice}
+			style={{ ...gradeButton, backgroundColor: buttonData.bgColor }}
+			onClick={() => callUpdateCardAndPickNext(buttonData.updateCardChoice)}>
+			{buttonData.updateCardChoice}
 		</button>
 	)
 
-	return isLoading && orderedCardQueue[0]?._id ? (
+	return isLoading || !orderedCardQueue[0] ? (
 		<Loader />
 	) : (
 		<div style={cardDiv}>
@@ -94,14 +103,14 @@ export const Card = () => {
 			</div>
 			<div style={gradeButtonsDiv}>
 				{/* buttons for not remembered card */}
-				{buttonData.slice(0, 3).map((bD, i) => (
-					<ChoiceButton key={i} bD={bD} />
+				{buttonsData.slice(0, 3).map((buttonData, i) => (
+					<ChoiceButton key={i} buttonData={buttonData} />
 				))}
 				{/* visual separator */}
 				<p style={{ margin: '0 0.4rem', color: 'grey' }}>{'|'}</p>
 				{/* buttons for remembered card */}
-				{buttonData.slice(3, 6).map((bD, i) => (
-					<ChoiceButton key={i} bD={bD} />
+				{buttonsData.slice(3, 6).map((buttonData, i) => (
+					<ChoiceButton key={i} buttonData={buttonData} />
 				))}
 				<div style={{ bottom: '60px', position: 'absolute' }}>
 					<Link to={`/edit-card/${orderedCardQueue[0]._id}`}>
