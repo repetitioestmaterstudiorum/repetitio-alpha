@@ -33,9 +33,6 @@ export const Card = () => {
 		setOrderedCardQueue([].concat(notFreshlyUpdatedCards, freshlyUpdatedCards))
 	}, cardQueue)
 
-	console.log('cardQueue :>> ', cardQueue)
-	console.log('orderedCardQueue :>> ', orderedCardQueue)
-
 	useEffect(() => {
 		document.addEventListener('keydown', keyDownHandler, false)
 

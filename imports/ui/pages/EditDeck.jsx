@@ -56,7 +56,7 @@ export const EditDeck = ({ match }) => {
 		})
 	}
 
-	return !isLoading ? (
+	return !isLoading && currentDeck ? (
 		<div
 			style={{
 				display: 'flex',
