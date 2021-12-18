@@ -31,11 +31,10 @@ export const Card = () => {
 			.filter(isFreshlyUpdated)
 			.sort((a, b) => a.updatedAt - b.updatedAt)
 		setOrderedCardQueue([].concat(notFreshlyUpdatedCards, freshlyUpdatedCards))
-	}, cardQueue)
+	}, [cardQueue[0]._id])
 
 	useEffect(() => {
 		document.addEventListener('keydown', keyDownHandler, false)
-
 		return () => {
 			document.removeEventListener('keydown', keyDownHandler, false)
 		}

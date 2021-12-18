@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 import React, { useContext, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import Swal from 'sweetalert2/src/sweetalert2.js'
 
 import { Context } from '/imports/ui/DataState.jsx'
@@ -79,6 +79,9 @@ export const EditDeck = ({ match }) => {
 
 			<div>
 				<hr style={C.styles.hr} />
+				<Link to={`/deck/${deckId}`}>
+					<button style={C.styles.regularButton}>&#128640; Play deck</button>
+				</Link>
 				<p>Deck settings: </p>
 				<div
 					style={{

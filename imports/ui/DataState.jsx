@@ -128,7 +128,7 @@ export const DataState = ({ children }) => {
 	)
 }
 
-const recalculateCard = (card, grade) => {
+function recalculateCard(card, grade) {
 	// The SM2 algorithm reference is in README.md. Modified usage here:
 	// If answer between 0-2, repeat on the same day.
 	// Otherwise, according to the SM2 algorithm.
