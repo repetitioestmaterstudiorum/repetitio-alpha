@@ -12,7 +12,6 @@ export const Card = () => {
 	const { isLoading, cardQueue, updateCardAndPickNext, currentDeck, skipCard } =
 		useContext(Context)
 
-	const [orderedCardQueue, setOrderedCardQueue] = useState([])
 	const [showBackSide, setShowBackSide] = useState(null)
 	const [revealedAtLeastOnce, setRevealedAtLeastOnce] = useState(null)
 
@@ -20,18 +19,6 @@ export const Card = () => {
 		setShowBackSide(currentDeck?.showBackSideFirst)
 		setRevealedAtLeastOnce(false)
 	}, [updateCardAndPickNext])
-
-	// put freshly updated cards (usually skipped cards) last in the queue
-	useEffect(() => {
-		const isFreshlyUpdated = card =>
-			card.updatedAt >
-			dayjs().subtract(C.globalSettings.timeSkippedCardEndOfQueueInMin, 'minutes').toDate()
-		const notFreshlyUpdatedCards = cardQueue.filter(c => !isFreshlyUpdated(c))
-		const freshlyUpdatedCards = cardQueue
-			.filter(isFreshlyUpdated)
-			.sort((a, b) => a.updatedAt - b.updatedAt)
-		setOrderedCardQueue([].concat(notFreshlyUpdatedCards, freshlyUpdatedCards))
-	}, [cardQueue[0]._id])
 
 	useEffect(() => {
 		document.addEventListener('keydown', keyDownHandler, false)
@@ -67,8 +54,7 @@ export const Card = () => {
 		setShowBackSide(!showBackSide)
 	}
 
-	const callUpdateCardAndPickNext = choice =>
-		updateCardAndPickNext(orderedCardQueue[0]._id, choice)
+	const callUpdateCardAndPickNext = choice => updateCardAndPickNext(cardQueue[0]._id, choice)
 
 	const buttonsData = [
 		{ updateCardChoice: 0, bgColor: '#3a0101' },
@@ -88,13 +74,13 @@ export const Card = () => {
 		</button>
 	)
 
-	return isLoading || !orderedCardQueue[0] ? (
+	return isLoading || !cardQueue[0] ? (
 		<Loader />
 	) : (
 		<div style={cardDiv}>
 			<div style={cardContentDiv} onClick={() => flipCard()}>
 				<p style={{ fontSize: '2rem', whiteSpace: 'pre-wrap' }} unselectable='on'>
-					{showBackSide ? orderedCardQueue[0].back : orderedCardQueue[0].front}
+					{showBackSide ? cardQueue[0].back : cardQueue[0].front}
 				</p>
 			</div>
 			<div style={gradeButtonsDiv}>
@@ -109,12 +95,10 @@ export const Card = () => {
 					<ChoiceButton key={i} buttonData={buttonData} />
 				))}
 				<div style={{ bottom: '60px', position: 'absolute' }}>
-					<Link to={`/edit-card/${orderedCardQueue[0]._id}`}>
+					<Link to={`/edit-card/${cardQueue[0]._id}`}>
 						<button style={C.styles.roundButton}>&#9997;</button>
 					</Link>
-					<button
-						onClick={() => skipCard(orderedCardQueue[0]._id)}
-						style={C.styles.roundButton}>
+					<button onClick={() => skipCard(cardQueue[0]._id)} style={C.styles.roundButton}>
 						&#9889;
 					</button>
 				</div>

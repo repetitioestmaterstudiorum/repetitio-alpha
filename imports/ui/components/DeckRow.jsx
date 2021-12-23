@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTracker } from 'meteor/react-meteor-data'
 import { Link } from 'react-router-dom'
 
 import { CardCollection } from '/imports/api/collections/cardCollection.js'
@@ -7,10 +8,12 @@ import { C } from '/imports/startup/client/clientConstants.js'
 // ---
 
 export const DeckRow = ({ deck }) => {
-	const cardCount = CardCollection.find({
-		deckId: deck._id,
-		dueDate: { $lte: new Date() },
-	}).count()
+	const cardCount = useTracker(() =>
+		CardCollection.find({
+			deckId: deck._id,
+			dueDate: { $lte: new Date() },
+		}).count()
+	)
 	const hasCardsToLearn = !!cardCount
 
 	return (

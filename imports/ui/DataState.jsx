@@ -46,7 +46,15 @@ export const DataState = ({ children }) => {
 		const currentDeck = DeckCollection.findOne(currentDeckId)
 
 		const cardQueue = CardCollection.find(
-			{ deckId: currentDeck?._id, dueDate: { $lte: new Date() } },
+			{
+				deckId: currentDeck?._id,
+				dueDate: { $lte: new Date() },
+				updatedAt: {
+					$lte: dayjs()
+						.subtract(C.globalSettings.timeSkippedCardEndOfQueueInMin, 'minutes')
+						.toDate(),
+				},
+			},
 			{ sort: { efactor: 1, dueDate: 1 }, limit: C.globalSettings.queueLimit }
 		).fetch()
 
@@ -73,11 +81,9 @@ export const DataState = ({ children }) => {
 	const getCardById = cardId => CardCollection.findOne(cardId)
 
 	const skipCard = cardId => {
+		// this re-saves the card in the db (which triggers an update to updatedAt), to hide the card for a certain time
 		const card = CardCollection.findOne(cardId)
-		const lastCard = cardQueue[C.globalSettings.queueLimit - 1]
-		const newDueDate = dayjs(lastCard.dueDate).add(1, 'second').toDate()
-		const skippedCard = { ...card, dueDate: newDueDate }
-		Meteor.call('updateCard', card._id, skippedCard)
+		Meteor.call('updateCard', card._id, card)
 	}
 
 	const updateCardAndPickNext = (cardId, grade) => {
@@ -97,7 +103,7 @@ export const DataState = ({ children }) => {
 			},
 			{
 				// most recently changed first
-				sort: { updateDate: -1 },
+				sort: { updatedAt: -1 },
 				limit: 10,
 			}
 		).fetch()
@@ -113,7 +119,6 @@ export const DataState = ({ children }) => {
 				currentDeck,
 				cardsInCurrentDeckCount,
 				dueCardsInCurrentDeckCount,
-				// js array (queue)
 				cardQueue,
 				// react state
 				setCurrentDeckId,
