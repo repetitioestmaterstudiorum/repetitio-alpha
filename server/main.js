@@ -6,7 +6,7 @@ import { C } from '/imports/startup/server/serverConstants.js'
 import { sampleData, insertSampleDecks } from '/imports/api/server/sampleData.js'
 
 // publications
-import '../imports/api/server/dataPublications.js'
+import '/imports/api/server/dataPublications.js'
 
 // method files
 import '/imports/api/server/devMethods.js'

@@ -28,7 +28,7 @@ export const DataState = ({ children }) => {
 		const cardsQueueSubHandler = Meteor.subscribe('cardsQueue')
 		const allCardsSubHandler = Meteor.subscribe('cards')
 
-		if (!decksSubHandler.ready() || !cardsQueueSubHandler.ready || !allCardsSubHandler.ready) {
+		if (!decksSubHandler.ready() || !cardsQueueSubHandler.ready() || !allCardsSubHandler.ready()) {
 			return {
 				isLoading: true,
 				decks: [],
@@ -78,9 +78,9 @@ export const DataState = ({ children }) => {
 		}
 	})
 
-	const getCardById = cardId => CardCollection.findOne(cardId)
+	const getCardById = (cardId) => CardCollection.findOne(cardId)
 
-	const skipCard = cardId => {
+	const skipCard = (cardId) => {
 		// this re-saves the card in the db (which triggers an update to updatedAt), to hide the card for a certain time
 		const card = CardCollection.findOne(cardId)
 		Meteor.call('updateCard', card._id, card)
