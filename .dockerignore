@@ -1,0 +1,15 @@
+# flyctl launch added from .gitignore
+# compiled output (meteor has its own .gitignore file)
+node_modules
+
+# OS and VSCode
+**/.DS_Store
+**/.history
+
+# project files
+**/.env
+**/notes.md
+
+# flyctl launch added from .meteor/.gitignore
+.meteor/**/local
+fly.toml
